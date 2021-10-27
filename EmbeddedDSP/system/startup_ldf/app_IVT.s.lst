@@ -1,0 +1,350 @@
+Page 1  ../system/startup_ldf/app_IVT.s
+ADI SHARC Family Assembler (4.4.4.10) 10 Dec 2020 10:52:42
+
+offset           opcode  line
+======           ======  ====
+                            1 /*
+                            2 ** ADSP-21479 app_IVT.s generated on Jul 31, 2020 at 09:54:49
+                            3 */
+                            4 /*
+                            5 ** Copyright (C) 2000-2019 Analog Devices Inc., All Rights Reserved.
+                            6 **
+                            7 ** This file is generated automatically based upon the options selected
+                            8 ** in the System Configuration utility. Changes to the Startup Code configuration
+                            9 ** should be made by modifying the appropriate options rather than editing
+                           10 ** this file. To access the System Configuration utility, double-click the
+                           11 ** system.svc file from a navigation view.
+                           12 **
+                           13 ** If you need to modify this file, select "Permit alteration of Interrupt
+                           14 ** Table Vector" from "Startup Code/LDF: Advanced Options" in the System
+                           15 ** Configuration utility. This encloses the whole file within a user
+                           16 ** modifiable section and any modification made will be preserved.
+                           17 */
+                           18 
+                           19 .FILE_ATTR libGroup="startup";
+                           20 .FILE_ATTR libName="libc";
+                           21 
+                           22 #include <sys/anomaly_macros_rtl.h> // defines silicon anomaly macros
+                           23 #include <interrupt.h>              // defines interrupt support
+                           24 #include <platform_include.h>       // defines MMR macros
+                           25 #include <adi_osal.h>               // OSAL support
+                           26 #include <sys/fatal_error_code.h>   // defines fatal error support
+                           27 
+                           28 /* INT_IRQ macro - used for the default interrupt vector instructions sequence
+                           29 **                 of interrupts where the status stack (STS) is pushed
+                           30 **                 automatically by the hardware. STS is automatically pushed
+                           31 **                 for IRQ, Timer and VIRPTL interrupts.
+                           32 */
+                           33 #define INT_IRQ(irp)                       \
+                           34     .RETAIN_NAME ___int_irq_##irp;         \
+                           35     .EXTERN __dispatcher_##irp;            \
+                           36     ___int_irq_##irp:                      \
+                           37     JUMP __dispatcher_##irp (DB);          \
+                           38        ASTAT = ADI_CID_##irp;              \
+                           39        NOP;                                \
+                           40     NOP;                                   \
+                           41     .___int_irq_##irp##.end:
+                           42 
+                           43 /* INT macro     - used for the default interrupt vector instructions sequence
+                           44 **                 of interrupts where the status stack (STS) is not pushed
+                           45 **                 automatically by the hardware. STS is automatically pushed
+                           46 **                 for IRQ, Timer and VIRPTL interrupts.
+                           47 */
+                           48 #define INT(irp)                           \
+                           49     .RETAIN_NAME ___int_##irp;             \
+                           50     .EXTERN __dispatcher_##irp;            \
+                           51     ___int_##irp:                          \
+                           52     JUMP __dispatcher_##irp (DB);          \
+                           53        PUSH STS;                           \
+                           54        ASTAT = ADI_CID_##irp;              \
+                           55     NOP;                                   \
+                           56     .___int_##irp##.end:
+                           57 
+                           58 /* INT_JUMP      - instructions to jump to a target label without
+                           59 **                 going through an interrupt dispatcher.
+                           60 */
+                           61 #define INT_JUMP(irp, jump_tgt)            \
+                           62     .EXTERN jump_tgt;                      \
+                           63     .RETAIN_NAME ___int_jump_##irp;        \
+                           64     ___int_jump_##irp:                     \
+                           65     NOP;                                   \
+                           66     JUMP jump_tgt;                         \
+                           67     NOP;                                   \
+                           68     NOP;
+                           69 
+                           70 /* UNUSED_INTERRUPT - The instructions jump to fatal_error for the case
+                           71 **                    where an interrupt that was not meant to be used
+                           72 **                    gets latched.
+                           73 */
+                           74 #define UNUSED_INTERRUPT(irp)              \
+                           75     .EXTERN _adi_fatal_error;              \
+                           76     .RETAIN_NAME ___int_unused_##irp;      \
+                           77     ___int_unused_##irp:                   \
+                           78     R12 = ADI_CID_##irp;                   \
+                           79     JUMP (PC, _adi_fatal_error) (DB);      \
+                           80        R4 = _AFE_G_RunTimeError;           \
+                           81        R8 = _AFE_S_UnusedInterruptRaised;
+                           82 
+                           83 /* RESERVED_INTERRUPT - 4 RTI instructions for reserved interrupts. */
+                           84 #define RESERVED_INTERRUPT RTI;RTI;RTI;RTI;
+                           85 
+                           86 /*
+                           87 ** ADSP-214xx Interrupt vector code
+                           88 */
+     0                     89 .SECTION/CODE/NW/DOUBLEANY iv_code;
+                           90 
+     0                     91 ___interrupt_table:
+                           92 
+                           93 .RETAIN_NAME ___int_EMUI;            // 0x00 - Emulator Interrupt
+     0                     94 ___int_EMUI:
+     0     000000000000    95       NOP;
+     1     000000000000    96       NOP;
+     2     000000000000    97       NOP;
+     3     000000000000    98       NOP;
+     4                     99 .___int_EMU.end:
+                          100 
+     4                    101 INT_JUMP(RSTI,start)                 // 0x04 - Reset Interrupt
+     4     000000000000   101 
+     5     063e00000000   101 
+     6     000000000000   101 
+     7     000000000000   101 
+     8                    102 INT(IICDI)                           // 0x08 - Illegal Input Condition Detected
+     8     063e04000000   102 
+     9     172000000000   102 
+     a     0f7602000000   102 
+     b     000000000000   102 
+     c                    102 
+     c                    103 INT(SOVFI)                           // 0x0c - Stack Overflow/Full Interrupt
+     c     063e04000000   103 
+     d     172000000000   103 
+     e     0f7603000001   103 
+     f     000000000000   103 
+    10                    103 
+    10                    104 INT_IRQ(TMZHI)                       // 0x10 - Timer Expired High Priority
+    10     063e04000000   104 
+    11     0f7604000002   104 
+    12     000000000000   104 
+    13     000000000000   104 
+    14                    104 
+    14                    105 INT(SPERRI)                          // 0x14 - SPORT Error Interrupt
+    14     063e04000000   105 
+    15     172000000000   105 
+    16     0f7605000003   105 
+    17     000000000000   105 
+    18                    105 
+    18                    106 INT(BKPI)                            // 0x18 - Hardware Breakpoint Interrupt
+    18     063e04000000   106 
+    19     172000000000   106 
+    1a     0f7606000004   106 
+    1b     000000000000   106 
+    1c                    106 
+    1c     0b3e00000000   107 RESERVED_INTERRUPT                   // 0x1c
+    1d     0b3e00000000   107 
+    1e     0b3e00000000   107 
+    1f     0b3e00000000   107 
+    20                    108 INT_IRQ(IRQ2I)                       // 0x20 - IRQ2I_ is asserted
+    20     063e04000000   108 
+    21     0f7608000005   108 
+    22     000000000000   108 
+    23     000000000000   108 
+    24                    108 
+    24                    109 INT_IRQ(IRQ1I)                       // 0x24 - IRQ1I_ is asserted
+    24     063e04000000   109 
+    25     0f7609000006   109 
+    26     000000000000   109 
+    27     000000000000   109 
+    28                    109 
+    28                    110 INT_IRQ(IRQ0I)                       // 0x28 - IRQ0I_ is asserted
+    28     063e04000000   110 
+    29     0f760a000007   110 
+    2a     000000000000   110 
+    2b     000000000000   110 
+    2c                    110 
+    2c                    111 INT(P0I)                             // 0x2c - Programmable Interrupt 0
+    2c     063e04000000   111 
+    2d     172000000000   111 
+    2e     0f760b000008   111 
+    2f     000000000000   111 
+    30                    111 
+    30                    112 INT(P1I)                             // 0x30 - Programmable Interrupt 1
+    30     063e04000000   112 
+    31     172000000000   112 
+    32     0f760c000009   112 
+    33     000000000000   112 
+    34                    112 
+    34                    113 INT(P2I)                             // 0x34 - Programmable Interrupt 2
+    34     063e04000000   113 
+    35     172000000000   113 
+    36     0f760d00000a   113 
+    37     000000000000   113 
+    38                    113 
+    38                    114 INT(P3I)                             // 0x38 - Programmable Interrupt 3
+    38     063e04000000   114 
+    39     172000000000   114 
+    3a     0f760e00000b   114 
+    3b     000000000000   114 
+    3c                    114 
+    3c                    115 INT(P4I)                             // 0x3c - Programmable Interrupt 4
+    3c     063e04000000   115 
+    3d     172000000000   115 
+    3e     0f760f00000c   115 
+    3f     000000000000   115 
+    40                    115 
+    40                    116 INT(P5I)                             // 0x40 - Programmable Interrupt 5
+    40     063e04000000   116 
+    41     172000000000   116 
+    42     0f761000000d   116 
+    43     000000000000   116 
+    44                    116 
+    44                    117 INT(P6I)                             // 0x44 - Programmable Interrupt 6
+    44     063e04000000   117 
+    45     172000000000   117 
+    46     0f760000100e   117 
+    47     000000000000   117 
+    48                    117 
+    48                    118 INT(P7I)                             // 0x48 - Programmable Interrupt 7
+    48     063e04000000   118 
+    49     172000000000   118 
+    4a     0f760100100f   118 
+    4b     000000000000   118 
+    4c                    118 
+    4c                    119 INT(P8I)                             // 0x4c - Programmable Interrupt 8
+    4c     063e04000000   119 
+    4d     172000000000   119 
+    4e     0f7602001010   119 
+    4f     000000000000   119 
+    50                    119 
+    50                    120 INT(P9I)                             // 0x50 - Programmable Interrupt 9
+    50     063e04000000   120 
+    51     172000000000   120 
+    52     0f7603001011   120 
+    53     000000000000   120 
+    54                    120 
+    54                    121 INT(P10I)                            // 0x54 - Programmable Interrupt 10
+    54     063e04000000   121 
+    55     172000000000   121 
+    56     0f7604001012   121 
+    57     000000000000   121 
+    58                    121 
+    58                    122 INT(P11I)                            // 0x58 - Programmable Interrupt 11
+    58     063e04000000   122 
+    59     172000000000   122 
+    5a     0f7605001013   122 
+    5b     000000000000   122 
+    5c                    122 
+    5c                    123 INT(P12I)                            // 0x5c - Programmable Interrupt 12
+    5c     063e04000000   123 
+    5d     172000000000   123 
+    5e     0f7606001014   123 
+    5f     000000000000   123 
+    60                    123 
+    60                    124 INT(P13I)                            // 0x60 - Programmable Interrupt 13
+    60     063e04000000   124 
+    61     172000000000   124 
+    62     0f7607001015   124 
+    63     000000000000   124 
+    64                    124 
+    64                    125 INT(P14I)                            // 0x64 - Programmable Interrupt 14
+    64     063e04000000   125 
+    65     172000000000   125 
+    66     0f7611000016   125 
+    67     000000000000   125 
+    68                    125 
+    68                    126 INT(P15I)                            // 0x68 - Programmable Interrupt 15
+    68     063e04000000   126 
+    69     172000000000   126 
+    6a     0f7612000017   126 
+    6b     000000000000   126 
+    6c                    126 
+    6c                    127 INT(P16I)                            // 0x6c - Programmable Interrupt 16
+    6c     063e04000000   127 
+    6d     172000000000   127 
+    6e     0f7613000018   127 
+    6f     000000000000   127 
+    70                    127 
+    70                    128 INT(P17I)                            // 0x70 - Programmable Interrupt 17
+    70     063e04000000   128 
+    71     172000000000   128 
+    72     0f7608001019   128 
+    73     000000000000   128 
+    74                    128 
+    74                    129 INT(P18I)                            // 0x74 - Programmable Interrupt 18
+    74     063e04000000   129 
+    75     172000000000   129 
+    76     0f760900101a   129 
+    77     000000000000   129 
+    78                    129 
+    78                    130 INT(CB7I)                            // 0x78 - Circular Buffer 7 Overflow
+    78     063e04000000   130 
+    79     172000000000   130 
+    7a     0f761400001b   130 
+    7b     000000000000   130 
+    7c                    130 
+    7c                    131 INT(CB15I)                           // 0x7c - Circular Buffer 15 Overflow
+    7c     063e04000000   131 
+    7d     172000000000   131 
+    7e     0f761500001c   131 
+    7f     000000000000   131 
+    80                    131 
+    80                    132 INT_IRQ(TMZLI)                       // 0x80 - Timer=0(Low Priority Option)
+    80     063e04000000   132 
+    81     0f761600001d   132 
+    82     000000000000   132 
+    83     000000000000   132 
+    84                    132 
+    84                    133 INT(FIXI)                            // 0x84 - Fixed-point Overflow
+    84     063e04000000   133 
+    85     172000000000   133 
+    86     0f761700001e   133 
+    87     000000000000   133 
+    88                    133 
+    88                    134 INT(FLTOI)                           // 0x88 - Floating-point Overflow
+    88     063e04000000   134 
+    89     172000000000   134 
+    8a     0f761800001f   134 
+    8b     000000000000   134 
+    8c                    134 
+    8c                    135 INT(FLTUI)                           // 0x8c - Floating-point Underflow
+    8c     063e04000000   135 
+    8d     172000000000   135 
+    8e     0f7619000020   135 
+    8f     000000000000   135 
+    90                    135 
+    90                    136 INT(FLTII)                           // 0x90 - Floating-point invalid
+    90     063e04000000   136 
+    91     172000000000   136 
+    92     0f761a000021   136 
+    93     000000000000   136 
+    94                    136 
+    94                    137 INT(EMULI)                           // 0x94 - Emulator Low Priority Interrupt
+    94     063e04000000   137 
+    95     172000000000   137 
+    96     0f761b000022   137 
+    97     000000000000   137 
+    98                    137 
+    98                    138 INT(SFT0I)                           // 0x98 - User Software Interrupt 0
+    98     063e04000000   138 
+    99     172000000000   138 
+    9a     0f761c000023   138 
+    9b     000000000000   138 
+    9c                    138 
+    9c                    139 INT(SFT1I)                           // 0x9c - User Software Interrupt 1
+    9c     063e04000000   139 
+    9d     172000000000   139 
+    9e     0f761d000024   139 
+    9f     000000000000   139 
+    a0                    139 
+    a0                    140 INT(SFT2I)                           // 0xa0 - User Software Interrupt 2
+    a0     063e04000000   140 
+    a1     172000000000   140 
+    a2     0f761e000025   140 
+    a3     000000000000   140 
+    a4                    140 
+    a4                    141 INT(SFT3I)                           // 0xa4 - User Software Interrupt 3
+    a4     063e04000000   141 
+    a5     172000000000   141 
+    a6     0f761f000026   141 
+    a7     000000000000   141 
+    a8                    141 
+    a8                    142 .___interrupt_table.end:             // 0xa8
+                          143 

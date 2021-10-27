@@ -1,0 +1,179 @@
+Page 1  ../system/startup_ldf/app_startup.s
+ADI SHARC Family Assembler (4.4.4.10) 10 Dec 2020 10:52:43
+
+offset           opcode  line
+======           ======  ====
+                            1 /*
+                            2 ** ADSP-21479 startup code generated on Jul 31, 2020 at 09:54:48.
+                            3 */
+                            4 /*
+                            5 ** Copyright (C) 2000-2019 Analog Devices Inc., All Rights Reserved.
+                            6 **
+                            7 ** This file is generated automatically based upon the options selected
+                            8 ** in the System Configuration utility. Changes to the Startup Code configuration
+                            9 ** should be made by modifying the appropriate options rather than editing
+                           10 ** this file. To access the System Configuration utility, double-click the
+                           11 ** system.svc file from a navigation view.
+                           12 **
+                           13 ** Custom additions can be inserted within the user-modifiable sections,
+                           14 ** these are bounded by comments that start with "$VDSG". Only changes
+                           15 ** placed within these sections are preserved when this file is re-generated.
+                           16 **
+                           17 ** Product      : CrossCore Embedded Studio
+                           18 ** Tool Version : 6.2.1.5
+                           19 */
+                           20 
+                           21 .FILE_ATTR libGroup="startup";
+                           22 .FILE_ATTR libName="libc";
+                           23 
+                           24 .FILE_ATTR libFunc="___lib_prog_term";
+                           25 .FILE_ATTR FuncName="___lib_prog_term";
+                           26 .FILE_ATTR libFunc="start";
+                           27 .FILE_ATTR FuncName="start";
+                           28 .FILE_ATTR prefersMem="any";
+                           29 .FILE_ATTR prefersMemNum="50";
+                           30 
+                           31 #include <sys/anomaly_macros_rtl.h> // defines silicon anomaly macros
+                           32 #include <interrupt.h>              // defines interrupt support
+                           33 #include <platform_include.h>       // defines MMR macros
+                           34 #include <adi_osal.h>               // OSAL support
+                           35 #include <sys/fatal_error_code.h>   // defines fatal error support
+                           36 
+                           37 /* End marker for the list of static constructors.
+                           38 ** seg_ctdml has to be mapped right after seg_ctdm.
+                           39 */
+                           40 
+     0                     41 .SECTION/DATA/DOUBLEANY seg_ctdml;
+                           42 .RETAIN_NAME __ctor_NULL_marker;
+                           43 .GLOBAL __ctor_NULL_marker;
+                           44 .VAR __ctor_NULL_marker = 0;
+                           45 
+                           46 /* The .gdt (global dispatch table) data is used by the C++ exception
+                           47 ** runtime library support to determine which area of code a particular
+                           48 ** exception belongs. These .gdt sections must be mapped contiguously
+                           49 ** into memory by the LDF starting with this one and then lastly .gdtl
+                           50 ** should be mapped.
+                           51 */
+                           52 
+     0                     53 .SECTION/DATA/DOUBLEANY .gdt;
+                           54 .VAR ___eh_gdt[1];
+                           55 .GLOBAL ___eh_gdt;
+                           56 .TYPE ___eh_gdt,STT_OBJECT;
+                           57 
+                           58 /* Suppress the assemblers informational message regarding the automatic
+                           59 ** call sequence change it does when building -swc.
+                           60 */
+                           61 .MESSAGE/SUPPRESS 2536;
+                           62 
+                           63 
+                           64 .GLOBAL start;
+                           65 
+     0                     66 .SECTION/CODE/DOUBLEANY seg_pmco;
+                           67 
+     0                     68 start:
+                           69 
+                           70 
+                           71 /*$VDSG<insert-code-very-beginning>                             */
+     0                     72 .start_of_user_code_very_beginning:
+                           73       /*
+                           74       ** Insert any additional code to be executed before any other 
+                           75       ** startup code here.
+                           76       ** Code inserted here is preserved when this file is re-generated.
+                           77       ** Note that the C runtime environment hasn't been setup yet
+                           78       ** so you cannot call C or C++ functions.
+                           79       */
+     0                     80 .end_of_user_code_very_beginning:
+                           81 /*$VDSG<insert-code-very-beginning>                             */
+                           82 
+                           83       /*
+                           84       ** Initializes the processor, memory, C runtime and heaps.
+                           85       */
+                           86       .EXTERN ___lib_setup_c;
+     0     06be00000000    87       CALL ___lib_setup_c;
+                           88 
+                           89 
+                           90 /*$VDSG<insert-code-after-setup>                                */
+     3                     91 .start_of_user_code_after_setup:
+                           92       /*
+                           93       ** Insert any additional code to be executed at the start after
+                           94       ** the C runtime and hardware has been initialized.
+                           95       ** Code inserted here is preserved when this file is re-generated.
+                           96       */
+     3                     97 .end_of_user_code_after_setup:
+                           98 /*$VDSG<insert-code-after-setup>                                */
+                           99 
+                          100       /*
+                          101       ** Call the OSAL init function.
+                          102       */
+                          103       .EXTERN _adi_osal_Init;    // ADI_OSAL_STATUS adi_osal_Init(void);
+     3     180400000000   104       CJUMP _adi_osal_Init (DB);
+     6             9ff2   105          DM(I7, M7) = R2;
+     7     9fc000000000   106          DM(I7, M7) = PC;
+     a                    106 
+                          107 
+     a         0f810000   108       R1 = E_ADI_OSAL_SUCCESS;
+     c         0180b001   109       COMPU(R0, R1);
+     e     062000000000   110       IF NE JUMP .osal_Init_failed;
+                          111 
+                          112       /*
+                          113       ** Call all the C++ static class instance constructors.
+                          114       */
+                          115       .EXTERN  __ctors;
+    11     0f1000000000   116       I0 = __ctors;              // load pointer to the list of constructors
+                          117                                  // into call preserved I0
+    14         717f02bf   118       R5 = I6;                   // hold current I6 in preserved register R5
+    16             9190   119       R0 = DM(I0, M6);           // get the address of the first constructor
+    17     703e0e821000   120       R0 = PASS R0, I13 = R0;    // check if it's the NULL list terminator
+    1a                    121 .call_ctors:
+    1a     060000000000   122       IF EQ JUMP .call_ctors_exit; // if it is NULL we have completed
+                          123 
+    1d         717f8b3f   124       I6 = I7;
+    1f         083f6c3f   125       JUMP (M13, I13) (DB);      // call the constructor
+    21             9ff5   126          DM(I7, M7) = R5;
+    22     9fc000000000   127          DM(I7, M7) = PC;
+    25                    127 
+    25     073e04000000   128       JUMP (PC, .call_ctors) (DB);
+    28             9190   129          R0 = DM(I0, M6);        // get the address of the next constructor
+    29     703e0e821000   130          R0 = PASS R0, I13 = R0; // check if it's the NULL list terminator
+    2c                    131 .call_ctors_exit:
+                          132 
+                          133       R4 = R4 - R4,              // argc = 0
+    2c     727e84002444   134          R8 = M5;                // argv = NULL
+                          135 
+                          136 
+                          137 /*$VDSG<insert-code-before-call-to-main>                        */
+    2f                    138 .start_of_user_code1:
+                          139       /*
+                          140       ** Insert any additional code to be executed before calling main() here.
+                          141       ** Code inserted here is preserved when this file is re-generated.
+                          142       ** Avoid clobbering the values of registers R4 and R8 as they hold
+                          143       ** the argc and argv parameters for main().
+                          144       */
+    2f                    145 .end_of_start_of_user_code1:
+                          146 /*$VDSG<insert-code-before-call-to-main>                        */
+                          147 
+                          148       .EXTERN _main;
+    2f     063e04000000   149       JUMP _main (DB);           // call main()
+    32         9fc40000   150          DM(I7, M7) = 0;         // NULL FP to terminate call stack unwinding
+    34     9fc000000000   151          DM(I7, M7) = PC;
+    37                    151 
+                          152 
+                          153       .GLOBAL ___lib_prog_term;
+    37                    154 ___lib_prog_term:
+    37             0081   155       IDLE;
+    38     063e00000000   156       JUMP ___lib_prog_term;     // Stay put.
+    3b                    157 .___lib_prog_term.end:
+                          158 
+                          159       /*
+                          160       ** The call to _adi_osal_Init returned an error so call _adi_fatal_error.
+                          161       */
+                          162       .EXTERN _adi_fatal_error;
+    3b                    163 .osal_Init_failed:
+    3b         703e063f   164       R12 = R0;                  // pass adi_osal_Init result value
+    3d     063e04000000   165       JUMP _adi_fatal_error (DB); // doesn't return
+    40         0f840007   166          R4 = _AFE_G_LibraryError;
+    42         0f880006   167          R8 = _AFE_S_adi_osal_Init_failure;
+    44                    168 .osal_Init_failed.end:
+                          169 
+    44                    170 .start.end:
+                          171 
