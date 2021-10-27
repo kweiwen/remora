@@ -47,6 +47,7 @@
 								<option id="compiler.option.compilerswitch.39523554" name="Compiler Switch" superClass="compiler.option.compilerswitch" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<option id="compiler.option.coreid.1224307780" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
 								<option id="compiler.option.additionalattr.957472285" name="Additional attributes (-file-attr):" superClass="compiler.option.additionalattr" useByScannerDiscovery="false"/>
+								<option id="compiler.option.cpp11.282539852" name="Compile C++ source files with C++11 feature extensions (-c++11)" superClass="compiler.option.cpp11" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<inputType id="compiler.inputType.1619904177" name="C/C++ Source" superClass="compiler.inputType"/>
 							</tool>
 							<tool id="sharc.toolchain.linker.415007605" name="CrossCore SHARC Linker" superClass="sharc.toolchain.linker">
@@ -66,6 +67,7 @@
 								<option id="linker.option.misrachecksrcfiles.1576291967" name="-misra-no-cross-module" superClass="linker.option.misrachecksrcfiles" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="linker.option.additionaldirectories.20868950" name="Additional include directories (-I):" superClass="linker.option.additionaldirectories" useByScannerDiscovery="false"/>
 								<option id="linker.option.gensymbolmap.1298637402" name="Generate symbol map (-map)" superClass="linker.option.gensymbolmap" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="linker.option.cppexceptlibs.1110057844" name="Use C++ exceptions libraries (-MD__ADI_LIBEH__)" superClass="linker.option.cppexceptlibs" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<inputType id="linker.doj.input.1359731547" name="Object Files" superClass="linker.doj.input"/>
 							</tool>
 							<tool id="sharc.toolchain.archiver.729365798" name="CrossCore SHARC Archiver" superClass="sharc.toolchain.archiver">
@@ -122,6 +124,12 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="sharc.toolchain.configuration.debug.793166954.943190132" name="main.cpp" rcbsApplicability="disable" resourcePath="src/main.cpp" toolsToInvoke="sharc.toolchain.compiler.552121657.1827268318">
+						<tool id="sharc.toolchain.compiler.552121657.1827268318" name="CrossCore SHARC C/C++ Compiler" superClass="sharc.toolchain.compiler.552121657">
+							<option id="compiler.option.cpp11.1139866811" name="Compile C++ source files with C++11 feature extensions (-c++11)" superClass="compiler.option.cpp11" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<inputType id="compiler.inputType.268520113" name="C/C++ Source" superClass="compiler.inputType"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
@@ -173,6 +181,7 @@
 								</option>
 								<option id="compiler.option.compilerswitch.814070887" name="Compiler Switch" superClass="compiler.option.compilerswitch" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<option id="compiler.option.coreid.296045365" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
+								<option id="compiler.option.cpp11.178111490" name="Compile C++ source files with C++11 feature extensions (-c++11)" superClass="compiler.option.cpp11" value="true" valueType="boolean"/>
 								<inputType id="compiler.inputType.1295460203" name="C/C++ Source" superClass="compiler.inputType"/>
 							</tool>
 							<tool id="sharc.toolchain.linker.1500330357" name="CrossCore SHARC Linker" superClass="sharc.toolchain.linker">
@@ -191,6 +200,7 @@
 								</option>
 								<option id="linker.option.misrachecksrcfiles.1119635796" name="-misra-no-cross-module" superClass="linker.option.misrachecksrcfiles" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="linker.option.gensymbolmap.401332053" name="Generate symbol map (-map)" superClass="linker.option.gensymbolmap" value="true" valueType="boolean"/>
+								<option id="linker.option.cppexceptlibs.553076996" name="Use C++ exceptions libraries (-MD__ADI_LIBEH__)" superClass="linker.option.cppexceptlibs" value="false" valueType="boolean"/>
 								<inputType id="linker.doj.input.975496550" name="Object Files" superClass="linker.doj.input"/>
 							</tool>
 							<tool id="sharc.toolchain.archiver.1803220394" name="CrossCore SHARC Archiver" superClass="sharc.toolchain.archiver">
