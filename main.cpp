@@ -4,19 +4,17 @@
 #include <DigitalDelayLine.h>
 #include <Oscillator.h>
 
+#include "mld.hpp"
+
+
 int main()
 {
-	std::cout << "Hello World" << std::endl;
+	memoryld::memory_monitoring();
 
-	AudioParameterFloat test("0x00", "note", 69);
-	Oscillator osc();
+	DigitalDelayLine dl(1024, 0);
+	dl.Release();
 
-	for (int i = 0; i < 128; i++)
-	{
-		test = i;
-		std::cout << test.cc_value << std::endl;
-		std::cout << test.value << std::endl;
-	}
+	memoryld::memory_check();
 
 	return 0;
 }
