@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Vendor">
+      <UniqueIdentifier>{f979dbf2-529a-4363-b627-bf2a5a6a8b32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -20,8 +23,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mld.hpp">
-      <Filter>Resource Files</Filter>
+    <ClInclude Include="Vendor\AudioFile.h">
+      <Filter>Vendor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

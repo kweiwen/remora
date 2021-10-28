@@ -13,7 +13,7 @@ public:
 	{
 		digitalDelayLine.CreateBuffer(bufferLength, location);
 
-		time 		= new AudioParameterInt   ("0x00", "time", 			1, 32768, 32767);
+		time 		= new AudioParameterInt   ("0x00", "time", 			1, 48000, 48000);
 		feedback 	= new AudioParameterFloat ("0x01", "feedback", 		0.0f, 1.0f, 0.0f);
 		mix 		= new AudioParameterFloat ("0x02", "mix", 			0.0f, 1.0f, 0.0f);
 		bypass 		= new AudioParameterBool  ("0x03", "bypass",		false);
