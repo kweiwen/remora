@@ -18,6 +18,7 @@ void main()
 
 	AudioFile<double> audioFile;
 	audioFile.load("Extra/taipei-emperor-intro.wav");
+	std::cout << "Before Processing..." << std::endl;
 	audioFile.printSummary();
 
 	int channels = audioFile.getNumChannels();
@@ -43,7 +44,8 @@ void main()
 
 	bool ok = audioFile.setAudioBuffer(buffer);
 	audioFile.save("Extra/render-output.wav", AudioFileFormat::Wave);
-	std::cout << ok << std::endl;
+	std::cout << "After Processing..." << std::endl;
+	audioFile.printSummary();
 	
 	dl.Release();
 
