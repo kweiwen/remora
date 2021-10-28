@@ -26,5 +26,8 @@
     <ClInclude Include="Vendor\AudioFile.h">
       <Filter>Vendor</Filter>
     </ClInclude>
+    <ClInclude Include="Vendor\MLD.hpp">
+      <Filter>Vendor</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
