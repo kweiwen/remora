@@ -37,7 +37,7 @@ void main()
 		{
 			float currentSample = audioFile.samples[j][i];
 			dl.Process(&currentSample, 1);
-			buffer[j][i] = currentSample * 0.1;
+			buffer[j][i] = currentSample;
 		}
 	}
 
