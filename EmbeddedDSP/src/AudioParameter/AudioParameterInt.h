@@ -6,7 +6,7 @@
 class AudioParameterInt : public RangedAudioParameter<int>
 {
 public:
-	AudioParameterInt(const char* parameterID, const char* parameterName, int minValue, int maxValue, int defaultValue, float skewValue = 1, bool isSymmetric = false) : RangedAudioParameter<int>(parameterID, parameterName, minValue, maxValue, skewValue, isSymmetric, false), def(defaultValue), value(defaultValue)
+	AudioParameterInt(const char* parameterID, const char* parameterName, int minValue, int maxValue, int defaultValue, float skewValue = 0, bool isSymmetric = false) : RangedAudioParameter<int>(parameterID, parameterName, minValue, maxValue, skewValue, isSymmetric, false), def(defaultValue), value(defaultValue)
 	{
 		checkInvariants();
 		cc_value = convertToMIDICC(value);
@@ -57,6 +57,7 @@ private:
     {
     	assert(end >= value);
     	assert(value >= start);
-    	assert(skew > 0);
+        assert(skew > -2);
+        assert(2 > skew);
     }
 };

@@ -1,10 +1,11 @@
 #pragma once
 
-#ifndef PreferenceAudio
-#define PreferenceAudio
+#ifndef AudioPreference
+#define AudioPreference
 
 const float EULER		= 2.71828182845904523536f;
 const float LOG10E		= 0.43429448190325182765f;
+const float MIN_VAL		= 1.17549e-38;
 
 const float HALF_PI		= 1.570796326794896f;
 const float PI			= 3.141592653589793f;
@@ -49,7 +50,7 @@ const int BLOCK_SIZE_64		= 64;
 const int BLOCK_SIZE_128	= 128;
 const int BLOCK_SIZE_256	= 256;
 const int BLOCK_SIZE_512	= 512;
-#endif // !PreferenceAudio
+#endif // !AudioPreference
 
 #ifndef BLOCK_SIZE
 #define BLOCK_SIZE (BLOCK_SIZE_512)

@@ -4,15 +4,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "Driver/SPIB_isr.h"
 #include "Driver/audio_utilities.h"
 
 #include "AudioObject/CircularBuffer.h"
 #include "AudioObject/DigitalDelayLine.h"
 #include "AudioObject/Oscillator.h"
 
-DigitalDelayLine dl(32768, 2);
-Oscillator osc;
+unsigned int nodeSize = 2;
+DigitalDelayLine dl0(SR * 3, 1);
+DigitalDelayLine dl1(SR * 3, 2);
+AudioObject* audioNodes[8];
 
 // Structures to hold floating point data for each AD1939
 ad21479_float_data_1 fBlockA;
@@ -94,23 +95,46 @@ void clear_currentDMA()
 
 void prepare_audioBlocks()
 {
-	dl.ParameterCtrl(1, 20);
-	dl.ParameterCtrl(2, 127);
+	audioNodes[0] = &dl0;
+	audioNodes[1] = &dl1;
+
+	audioNodes[0]->ParameterCtrl(2, 64);
+
+	audioNodes[1]->ParameterCtrl(0, 16);
+	audioNodes[1]->ParameterCtrl(1, 64);
+	audioNodes[1]->ParameterCtrl(2, 64);
 }
 
 void processSample(float *buffer, unsigned int buffersize)
 {
+	for(int i = 0; i < buffersize; i++)
+	{
+		buffer[i] = buffer[i] * 10;
+	}
 }
 
 void process_audioBlocks()
 {
 	SRU(HIGH, DAI_PB18_I);
 
-//	dl.Process(fBlockA.Rx_L1, NUM_SAMPLES);
-	osc.Process(fBlockA.Rx_L1, NUM_SAMPLES);
+	for(int i = 0; i < nodeSize; i++)
+	{
+		audioNodes[i]->Process(fBlockA.Rx_L1, NUM_SAMPLES);
+	}
 
-	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_L1, NUM_SAMPLES);
-	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_R1, NUM_SAMPLES);
+//	processSample(fBlockA.Rx_L1, NUM_SAMPLES);
+//	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_L1, NUM_SAMPLES);
+//	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_R1, NUM_SAMPLES);
+
+	processSample(fBlockA.Rx_L1, NUM_SAMPLES);
+	processSample(fBlockA.Rx_R1, NUM_SAMPLES);
+
+	copy_buffer(fBlockA.Rx_L1, fBlockA.Tx_L1, NUM_SAMPLES);
+	copy_buffer(fBlockA.Rx_R1, fBlockA.Tx_R1, NUM_SAMPLES);
+
+	copy_buffer(fBlockB.Rx2_L1, fBlockB.Tx2_L1, NUM_SAMPLES);
+	copy_buffer(fBlockB.Rx2_R1, fBlockB.Tx2_R1, NUM_SAMPLES);
+
 	SRU(LOW, DAI_PB18_I);
 }
 

@@ -1,5 +1,5 @@
 /*
-** ADSP-21479 user heap source file generated on Oct 27, 2021 at 17:10:42.
+** ADSP-21479 user heap source file generated on Nov 10, 2021 at 15:57:04.
 */
 /*
 ** Copyright (C) 2000-2020 Analog Devices Inc., All Rights Reserved.
@@ -34,17 +34,17 @@
 
 extern "asm" unsigned long ldf_heap_space;
 extern "asm" unsigned long ldf_heap_length;
-extern "asm" int delay_heap_space;
-extern "asm" int delay_heap_length;
-extern "asm" int reverse_delay_heap_space;
-extern "asm" int reverse_delay_heap_length;
+extern "asm" int slot1_space;
+extern "asm" int slot1_length;
+extern "asm" int slot2_space;
+extern "asm" int slot2_length;
 
 const __heap_desc_t heap_table[4] =
 {
 
   { &ldf_heap_space, (unsigned long) &ldf_heap_length, 0 },
-  { &delay_heap_space, (unsigned long) &delay_heap_length, 1 },
-  { &reverse_delay_heap_space, (unsigned long) &reverse_delay_heap_length, 2 },
+  { &slot1_space, (unsigned long) &slot1_length, 1 },
+  { &slot2_space, (unsigned long) &slot2_length, 2 },
 
   { (void *)0, (size_t)0, 0 } /* This terminates the table. */
 };

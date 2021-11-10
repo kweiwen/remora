@@ -161,7 +161,6 @@ void main()
 	/* init PLL and external memory */
 	initPLL();
 	initExternalMemory();
-
 	/* entry point of recursive loop */
 	task_loop();
 }

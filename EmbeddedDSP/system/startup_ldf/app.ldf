@@ -1,5 +1,5 @@
 /*
-** ADSP-21479 linker description file generated on Oct 27, 2021 at 17:10:42.
+** ADSP-21479 linker description file generated on Nov 10, 2021 at 15:57:04.
 */
 /*
 ** Copyright (C) 2000-2020 Analog Devices Inc., All Rights Reserved.
@@ -361,7 +361,7 @@ PROCESSOR p0
       
       dxe_sdram_data
       {
-         RESERVE(heaps_and_stack_in_External, heaps_and_stack_in_External_length = 540000, 2)
+         RESERVE(heaps_and_stack_in_External, heaps_and_stack_in_External_length = 614400, 2)
          INPUT_SECTIONS( $OBJS_LIBS(seg_ext_data seg_sdram seg_dmda seg_vtbl) )
       } > mem_sdram_dmda
       
@@ -373,12 +373,12 @@ PROCESSOR p0
       dxe_sdram_stack_and_heap NO_INIT
       {
          RESERVE_EXPAND(heaps_and_stack_in_External, heaps_and_stack_in_External_length, 0, 2)
-         delay_heap_space = heaps_and_stack_in_External;
-         delay_heap_end = (delay_heap_space + (270000 - 2)) & 0xfffffffe;
-         delay_heap_length = delay_heap_end - delay_heap_space;
-         reverse_delay_heap_space = delay_heap_space + delay_heap_length + 2;
-         reverse_delay_heap_end = (reverse_delay_heap_space + (270000 - 2)) & 0xfffffffe;
-         reverse_delay_heap_length = reverse_delay_heap_end - reverse_delay_heap_space;
+         slot1_space = heaps_and_stack_in_External;
+         slot1_end = (slot1_space + (307200 - 2)) & 0xfffffffe;
+         slot1_length = slot1_end - slot1_space;
+         slot2_space = slot1_space + slot1_length + 2;
+         slot2_end = (slot2_space + (307200 - 2)) & 0xfffffffe;
+         slot2_length = slot2_end - slot2_space;
       } > mem_sdram_dmda
       
       dxe_flash

@@ -6,7 +6,12 @@
 class AudioParameterChoice : public RangedAudioParameter<int>
 {
 public:
-	AudioParameterChoice(const char* parameterID, const char* parameterName, unsigned int size, int* choicesList, unsigned int deafultIndex) : RangedAudioParameter<int>(parameterID, parameterName, 0, size-1), def(deafultIndex), value(deafultIndex), list(choicesList), size(size)
+	AudioParameterChoice(const char* parameterID, const char* parameterName, unsigned int size, int* choicesList, unsigned int deafultIndex) 
+    : RangedAudioParameter<int>(parameterID, parameterName, 0, size-1), 
+      def(deafultIndex),
+      value(deafultIndex), 
+      list(choicesList), 
+      size(size)
 	{
         checkInvariants();
         cc_value = convertToMIDICC(value);
@@ -71,7 +76,7 @@ private:
         assert(size > 0);
         assert(end >= value);
         assert(value >= start);
-        assert(skew > 0);
+        //assert(slope > 0);
     }
 };
 

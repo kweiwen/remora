@@ -1,5 +1,5 @@
 /*
-** ADSP-21479 startup code generated on Oct 27, 2021 at 17:10:42.
+** ADSP-21479 startup code generated on Nov 10, 2021 at 15:57:04.
 */
 /*
 ** Copyright (C) 2000-2020 Analog Devices Inc., All Rights Reserved.
