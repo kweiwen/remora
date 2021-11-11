@@ -14,7 +14,7 @@ public:
 	void CreateBuffer(unsigned int bufferLength, unsigned int location);
 	void FlushBuffer(void);
 	ValueType ReadBuffer(unsigned int delayInSamples);
-	float ReadBufferInterpolation(float delayInFractionalSamples);
+	float ReadBufferInterpolation(float delayInFractionalSamples, unsigned int interpollation);
 	void WriteBuffer(ValueType input);
 
 private:
@@ -114,9 +114,24 @@ ValueType CircularBuffer<ValueType>::ReadBuffer(unsigned int delayInSamples)
 }
 
 template <typename ValueType>
-float CircularBuffer<ValueType>::ReadBufferInterpolation(float delayInFractionalSamples)
+float CircularBuffer<ValueType>::ReadBufferInterpolation(float delayInFractionalSamples, unsigned int interpollation)
 {
-    return doLinearInterpolation(delayInFractionalSamples);
+	if(interpollation == 1)
+	{
+		return doLinearInterpolation(delayInFractionalSamples);
+	}
+	else if(interpollation == 2)
+	{
+		return doHermitInterpolation(delayInFractionalSamples);
+	}
+	else if(interpollation == 3)
+	{
+		return doLargrangeInterpolation(delayInFractionalSamples);
+	}
+	else
+	{
+		return ReadBuffer((int)delayInFractionalSamples);
+	}
 }
 
 template <typename ValueType>

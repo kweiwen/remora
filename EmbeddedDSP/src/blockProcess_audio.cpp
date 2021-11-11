@@ -122,12 +122,12 @@ void process_audioBlocks()
 		audioNodes[i]->Process(fBlockA.Rx_L1, NUM_SAMPLES);
 	}
 
-//	processSample(fBlockA.Rx_L1, NUM_SAMPLES);
-//	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_L1, NUM_SAMPLES);
-//	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_R1, NUM_SAMPLES);
-
 	processSample(fBlockA.Rx_L1, NUM_SAMPLES);
-	processSample(fBlockA.Rx_R1, NUM_SAMPLES);
+	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_L1, NUM_SAMPLES);
+	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_R1, NUM_SAMPLES);
+
+//	processSample(fBlockA.Rx_L1, NUM_SAMPLES);
+//	processSample(fBlockA.Rx_R1, NUM_SAMPLES);
 
 	copy_buffer(fBlockA.Rx_L1, fBlockA.Tx_L1, NUM_SAMPLES);
 	copy_buffer(fBlockA.Rx_R1, fBlockA.Tx_R1, NUM_SAMPLES);

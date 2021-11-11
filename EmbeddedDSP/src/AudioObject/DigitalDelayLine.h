@@ -48,7 +48,7 @@ void DigitalDelayLine::Process(float* buffer, uint32_t audio_block_size)
 	for(unsigned int index = 0; index < audio_block_size; index++)
 	{
 		float drySignal = buffer[index];
-		float wetSignal = digitalDelayLine.ReadBufferInterpolation((float)time->value);
+		float wetSignal = digitalDelayLine.ReadBufferInterpolation((float)time->value, 0);
 		digitalDelayLine.WriteBuffer(drySignal + wetSignal * (feedback->value));
 		buffer[index] = wetSignal * (mix->value) + drySignal * (1 - (mix->value));
 	}
