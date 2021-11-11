@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 namespace Utils
 {
 
@@ -11,6 +13,9 @@ float getFractionalPart(float input_data);
 
 int sign(float input_data);
 int sign(int input_data);
+
+void floatData2Mem(float input_data, char* mem);
+float mem2FloatData(char* input_data);
 
 }
 
@@ -83,4 +88,28 @@ int Utils::sign(int input_data)
 	{
 		return -1;
 	}
+}
+
+void Utils::floatData2Mem(float input_data, char* mem)
+{
+	/* WARNING!
+	 * this function only works in ADSP device, due to 32-bit char architecture */
+    char* temp;
+
+    temp = (char*)&input_data;
+
+    mem[0] = *temp >> 0 & 0xFF;
+    mem[1] = *temp >> 8 & 0xFF;
+    mem[2] = *temp >> 16 & 0xFF;
+    mem[3] = *temp >> 24 & 0xFF;
+}
+
+float Utils::mem2FloatData(char* input_data)
+{
+	/* WARNING!
+	 * this function only works in ADSP device, due to 32-bit char architecture */
+    unsigned int src = (input_data[0] << 0) + (input_data[1] << 8) + (input_data[2] << 16) + (input_data[3] << 24);
+    float temp;
+    std::memcpy(&temp, &src, sizeof temp);
+    return temp;
 }

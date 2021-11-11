@@ -45,11 +45,13 @@
 #include "Driver/UART0_isr.h"				/* Get definition of UART0ISR(), initUART();*/
 #include "Driver/heap_manager.h"
 
-#include "AudioParameter/AudioParameter.h"
-#include "AudioParameter/AudioParameterFloat.h"
-#include "AudioParameter/AudioParameterInt.h"
-#include "AudioParameter/AudioParameterBool.h"
-#include "AudioParameter/AudioParameterChoice.h"
+//#include "Utilities/Utils.h"
+
+//#include "AudioParameter/AudioParameter.h"
+//#include "AudioParameter/AudioParameterFloat.h"
+//#include "AudioParameter/AudioParameterInt.h"
+//#include "AudioParameter/AudioParameterBool.h"
+//#include "AudioParameter/AudioParameterChoice.h"
 
 void initGPIO(void)
 {
@@ -161,6 +163,7 @@ void main()
 	/* init PLL and external memory */
 	initPLL();
 	initExternalMemory();
+
 	/* entry point of recursive loop */
 	task_loop();
 }
