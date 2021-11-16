@@ -6,27 +6,37 @@
 #include <RangedAudioParameter.h>
 #include <AudioParameterFloat.h>
 #include <AudioObject.h>
+#include <DopplerPitchShifter.h>
+#include <DopplerOctave.h>
+#include <FilterDesigner.h>
 
 #include "Vendor/MLD.hpp"
 #include "Vendor/AudioFile.h"
 
 void renderAlgorithm()
 {
-	DigitalDelayLine dl0(262144, 0);
-	dl0.ParameterCtrl(1, 0);
-	dl0.ParameterCtrl(2, 64);
-	DigitalDelayLine dl1(262144, 0);
-	dl1.ParameterCtrl(1, 70);
-	dl1.ParameterCtrl(2, 80);
+	//DigitalDelayLine dl0(262144, 0);
+	//dl0.ParameterCtrl(1, 0);
+	//dl0.ParameterCtrl(2, 64);
+	//DigitalDelayLine dl1(262144, 0);
+	//dl1.ParameterCtrl(1, 70);
+	//dl1.ParameterCtrl(2, 80);
 
-	unsigned int NodeSize = 2;
+	//unsigned int NodeSize = 2;
+
+	//AudioObject* audioNodes[8];
+	//audioNodes[0] = &dl0;
+	//audioNodes[1] = &dl1;
+
+	DopplerOctave obj(0);
+
+	unsigned int NodeSize = 1;
 
 	AudioObject* audioNodes[8];
-	audioNodes[0] = &dl0;
-	audioNodes[1] = &dl1;
+	audioNodes[0] = &obj;
 
 	AudioFile<double> audioFile;
-	audioFile.load("Extra/taipei-emperor-intro-mono.wav");
+	audioFile.load("Extra/sine_mono_32bit_48000.wav");
 	std::cout << "Before Processing..." << std::endl;
 	audioFile.printSummary();
 	std::cout << "" << std::endl;
@@ -64,8 +74,7 @@ void renderAlgorithm()
 	audioFile.printSummary();
 	std::cout << "" << std::endl;
 
-	dl0.Release();
-	dl1.Release();
+	obj.Release();
 }
 
 void memoryLeakDetector()
@@ -75,6 +84,15 @@ void memoryLeakDetector()
 	std::cout << "" << std::endl;
 	DigitalDelayLine dl(32768, 0);
 	dl.Release();
+
+	Oscillator osc;
+	osc.Release();
+
+	DopplerPitchShifter ps(0);
+	ps.Release();
+
+	DopplerOctave oct(0);
+	oct.Release();
 
 	memoryld::memory_check();
 }

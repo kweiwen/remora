@@ -6,7 +6,7 @@
 #include "../AudioParameter/AudioParameterInt.h"
 #include "../AudioParameter/AudioParameterFloat.h"
 #include "../AudioParameter/AudioParameterBool.h"
-#include "../AudioPreference.h"
+#include "../Utilities/AudioPreference.h"
 
 class DigitalDelayLine : public AudioObject
 {
@@ -15,15 +15,15 @@ public:
 	{
 		digitalDelayLine.CreateBuffer(bufferLength, location);
 
-		time 		= new AudioParameterInt   ("0x00", "time", 			1,		(bufferLength - 1),		(bufferLength - 1));
-		feedback 	= new AudioParameterFloat ("0x01", "feedback", 		0.0f,	1.0f,	0.0f);
-		mix 		= new AudioParameterFloat ("0x02", "mix", 			0.0f,	1.0f,	0.0f);
-		bypass 		= new AudioParameterBool  ("0x03", "bypass",		false);
+		bypass 		= new AudioParameterBool  ("0x00", "bypass",		false);
+		time 		= new AudioParameterInt   ("0x01", "time", 			1,		(bufferLength - 1),		(bufferLength - 1));
+		feedback 	= new AudioParameterFloat ("0x02", "feedback", 		0.0f,	1.0f,	0.0f);
+		mix 		= new AudioParameterFloat ("0x03", "mix", 			0.0f,	1.0f,	0.0f);
 
+		addParameter(bypass);
 		addParameter(time);
 		addParameter(feedback);
 		addParameter(mix);
-		addParameter(bypass);
 	}
 
 	~DigitalDelayLine()
@@ -45,12 +45,15 @@ private:
 
 void DigitalDelayLine::Process(float* buffer, uint32_t audio_block_size)
 {
-	for(unsigned int index = 0; index < audio_block_size; index++)
+	if (!(bypass->value))
 	{
-		float drySignal = buffer[index];
-		float wetSignal = digitalDelayLine.ReadBufferInterpolation((float)time->value, 0);
-		digitalDelayLine.WriteBuffer(drySignal + wetSignal * (feedback->value));
-		buffer[index] = wetSignal * (mix->value) + drySignal * (1 - (mix->value));
+		for(unsigned int index = 0; index < audio_block_size; index++)
+		{
+			float drySignal = buffer[index];
+			float wetSignal = digitalDelayLine.ReadBufferInterpolation((float)time->value, 0);
+			digitalDelayLine.WriteBuffer(drySignal + wetSignal * (feedback->value));
+			buffer[index] = wetSignal * (mix->value) + drySignal * (1 - (mix->value));
+		}
 	}
 }
 
@@ -58,15 +61,18 @@ void DigitalDelayLine::Reset()
 {
 	digitalDelayLine.FlushBuffer();
 
+	bypass->resetToDefaultValue();
 	time->resetToDefaultValue();
 	feedback->resetToDefaultValue();
 	mix->resetToDefaultValue();
-	bypass->resetToDefaultValue();
 }
 
 void DigitalDelayLine::Release()
 {
 	digitalDelayLine.~CircularBuffer();
+
+	delete bypass;
+	bypass = NULL;
 
 	delete time;
 	time = NULL;
@@ -76,9 +82,6 @@ void DigitalDelayLine::Release()
 
 	delete mix;
 	mix = NULL;
-
-	delete bypass;
-	bypass = NULL;
 
 	AudioObject::Release();
 }

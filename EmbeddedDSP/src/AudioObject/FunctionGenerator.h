@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../AudioPreference.h"
+#include "../Utilities/AudioPreference.h"
 #include "../Utilities/Utils.h"
+#include <iostream>
 
 enum E_WAVEFORM
 {
@@ -22,7 +23,7 @@ public:
 		offset = phase;
 		width = pulse_width;
 		_degree = 0;
-		_cycle = 0 + phase;
+		cycle = 0 + phase;
 		_value = 0;
 	}
 
@@ -34,18 +35,18 @@ public:
 	void FlushSample();
 	float offset;
 	float width;
+	float cycle;
 
 private:
 	float _degree;
-	float _cycle;
 	float _value;
 };
 
 float FunctionGenerator::Generate(unsigned int waveform, float frequency)
 {
-	_cycle = _cycle + frequency * INV_SR;
-	_cycle = Utils::getFractionalPart(_cycle);
-	_degree = _cycle * TWO_PI;
+	cycle = cycle + (frequency * INV_SR);
+	cycle = Utils::getFractionalPart(cycle);
+	_degree = cycle * TWO_PI;
 
 	switch(waveform)
 	{
@@ -56,7 +57,7 @@ float FunctionGenerator::Generate(unsigned int waveform, float frequency)
 		_value = 2 * INV_PI * asinf(sinf(_degree));
 		break;
 	case E_SAWTOOTH:
-		_value = (_cycle - 0.5f) * 2.0f;
+		_value = (cycle - 0.5f) * 2.0f;
 	    break;
 	case E_TRAPEZOID:
 		for (int index = 0; index < 16; index++)
@@ -75,9 +76,9 @@ float FunctionGenerator::Generate(unsigned int waveform, float frequency)
 	    break;
 	case E_PHASOR:
 		if(frequency)
-			_value = _cycle;
+			_value = cycle;
 		else
-			_value = (_cycle * -1.0f) + 1.0f;
+			_value = (cycle * -1.0f) + 1.0f;
 		break;
 	}
 	return _value;
@@ -85,7 +86,7 @@ float FunctionGenerator::Generate(unsigned int waveform, float frequency)
 
 void FunctionGenerator::FlushSample()
 {
+	cycle = 0;
 	_degree = 0;
-	_cycle = 0;
 	_value = 0;
 }

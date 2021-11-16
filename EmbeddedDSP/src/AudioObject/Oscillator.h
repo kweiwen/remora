@@ -12,7 +12,7 @@ class Oscillator : public AudioObject
 public:
 	Oscillator() : AudioObject(3)
 	{
-		int oscillatorChoiceList[5] = {E_SINE, E_TRIANGLE, E_SAWTOOTH, E_TRAPEZOID, E_SQUARE};
+		int oscillatorChoiceList[5] = {E_SINE, E_SAWTOOTH, E_TRIANGLE, E_TRAPEZOID, E_SQUARE};
 
 		volume		= new AudioParameterFloat	("0x00", "Volume",	0.0f, 1.0f, 0.5f);
 		pitch		= new AudioParameterFloat	("0x01", "Pitch",	69);
@@ -60,6 +60,17 @@ void Oscillator::Release()
 {
 	wave.FlushSample();
 	wave.~FunctionGenerator();
+
+	delete volume;
+	volume = NULL;
+
+	delete pitch;
+	pitch = NULL;
+
+	delete type;
+	type = NULL;
+
+	AudioObject::Release();
 }
 
 

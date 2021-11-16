@@ -9,10 +9,14 @@
 #include "AudioObject/CircularBuffer.h"
 #include "AudioObject/DigitalDelayLine.h"
 #include "AudioObject/Oscillator.h"
+#include "AudioObject/DopplerPitchShifter.h"
+#include "AudioObject/DopplerOctave.h"
 
-unsigned int nodeSize = 2;
+unsigned int nodeSize = 1;
 DigitalDelayLine dl0(SR * 3, 1);
 DigitalDelayLine dl1(SR * 3, 2);
+DopplerPitchShifter ps(0);
+DopplerOctave oct(0);
 AudioObject* audioNodes[8];
 
 // Structures to hold floating point data for each AD1939
@@ -95,21 +99,22 @@ void clear_currentDMA()
 
 void prepare_audioBlocks()
 {
-	audioNodes[0] = &dl0;
-	audioNodes[1] = &dl1;
+	audioNodes[0] = &oct;
+	audioNodes[1] = &dl0;
+	audioNodes[2] = &dl1;
 
-	audioNodes[0]->ParameterCtrl(2, 64);
-
-	audioNodes[1]->ParameterCtrl(0, 16);
-	audioNodes[1]->ParameterCtrl(1, 64);
 	audioNodes[1]->ParameterCtrl(2, 64);
+
+	audioNodes[2]->ParameterCtrl(0, 16);
+	audioNodes[2]->ParameterCtrl(1, 64);
+	audioNodes[2]->ParameterCtrl(2, 64);
 }
 
 void processSample(float *buffer, unsigned int buffersize)
 {
 	for(int i = 0; i < buffersize; i++)
 	{
-		buffer[i] = buffer[i] * 10;
+		buffer[i] = buffer[i] * 20;
 	}
 }
 
@@ -123,17 +128,9 @@ void process_audioBlocks()
 	}
 
 	processSample(fBlockA.Rx_L1, NUM_SAMPLES);
+
 	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_L1, NUM_SAMPLES);
 	copy_buffer(fBlockA.Rx_L1, fBlockB.Tx2_R1, NUM_SAMPLES);
-
-//	processSample(fBlockA.Rx_L1, NUM_SAMPLES);
-//	processSample(fBlockA.Rx_R1, NUM_SAMPLES);
-
-	copy_buffer(fBlockA.Rx_L1, fBlockA.Tx_L1, NUM_SAMPLES);
-	copy_buffer(fBlockA.Rx_R1, fBlockA.Tx_R1, NUM_SAMPLES);
-
-	copy_buffer(fBlockB.Rx2_L1, fBlockB.Tx2_L1, NUM_SAMPLES);
-	copy_buffer(fBlockB.Rx2_R1, fBlockB.Tx2_R1, NUM_SAMPLES);
 
 	SRU(LOW, DAI_PB18_I);
 }
