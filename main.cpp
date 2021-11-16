@@ -101,4 +101,17 @@ void main()
 {
 	renderAlgorithm();
 	memoryLeakDetector();
+
+	//FilterDesigner lp;
+	//lp.model = 1;
+	//lp.setParameter(1200, 0.707, 0);
+
+	//float* coefficient = lp.getCoefficients();
+
+	//std::cout << coefficient[0] << std::endl;
+	//std::cout << coefficient[1] << std::endl;
+	//std::cout << coefficient[2] << std::endl;
+	//std::cout << coefficient[3] << std::endl;
+	//std::cout << coefficient[4] << std::endl;
+	//std::cout << coefficient[5] << std::endl;
 }

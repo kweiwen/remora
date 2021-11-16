@@ -7,16 +7,16 @@
 enum E_FILTER_TYPE
 {
 	E_FLAT		  = 0,
-	E_LOW_PASS_2  = 1,
-	E_BAND_PASS   = 2,
-	E_HIGH_PASS_2 = 3,
-	E_LOW_PASS_1  = 4,
-	E_HIGH_PASS_1 = 5,
-	E_ALL_PASS_1  = 6,
-	E_ALL_PASS_2  = 7,
-	E_PEAK        = 8,
+	E_LOW_PASS_1  = 1,
+	E_LOW_PASS_2  = 2,
+	E_HIGH_PASS_1 = 3,
+	E_HIGH_PASS_2 = 4,
+	E_BAND_PASS   = 5,
+	E_BAND_REJECT = 6,
+	E_ALL_PASS_1  = 7,
+	E_ALL_PASS_2  = 8,
 	E_PARAMETRIC  = 9,
-	E_BAND_REJECT = 10,
+	E_PEAK        = 10,
 	E_LOW_SHELF   = 11,
 	E_HIGH_SHELF  = 12,
 };
@@ -28,20 +28,22 @@ public:
 	FilterDesigner()
     {
 		model = E_FLAT;
-		omega = 0;
-		sine_omega = 0;
-		cosine_omega = 0;
-		gain = 0;
-		q = 0;
-		slope = 0;
-		alpha = 0;
+		_omega = 0;
+		_sine_omega = 0;
+		_cosine_omega = 0;
+		_gain = 0;
+		_q = 0;
+		_slope = 0;
+		_alpha = 0;
+		_magnitude = 0;
+		_A = 0;
     };
 
     ~FilterDesigner()
     {
     };
 
-	void setParameter(float cut_off = 1200, float Q = 0.707, float slope = 0, float magnitude = 0);
+	void setParameter(float cut_off = 1200, float Q = 0.707, float _slope = 0, float _magnitude = 0);
     void setCoefficients();
 	float* getCoefficients();
 	int model;
@@ -59,24 +61,28 @@ private:
     float a1 = 0;
     float a2 = 0;
 
-	float omega;
-	float sine_omega;
-	float cosine_omega;
-	float gain;
-	float q;
-	float slope;
-	float alpha;
+	float _omega;
+	float _sine_omega;
+	float _cosine_omega;
+	float _gain;
+	float _q;
+	float _slope;
+	float _alpha;
+	float _magnitude;
+	float _A;
 };
 
 
 void FilterDesigner::setParameter(float cut_off, float Q, float slope, float magnitude)
 {
-	omega = TWO_PI * cut_off / SR;
-	sine_omega = sin(omega);
-	cosine_omega = cos(omega);
-	gain = pow(10, (magnitude / 20));
-	q = Q;
-	slope = slope;
+	_omega = (TWO_PI * cut_off) / SR;
+	_sine_omega = sin(_omega);
+	_cosine_omega = cos(_omega);
+	_magnitude = magnitude;
+	_gain = powf(10, (magnitude / 20));
+	_A = powf(10.0, (_magnitude / 40.0));
+	_q = Q;
+	_slope = slope;
 	setCoefficients();
 }
 
@@ -93,123 +99,201 @@ void FilterDesigner::setCoefficients()
 		a2 = 0;
 		break;
 	case E_LOW_PASS_1:
-		b1 = pow(EULER, -omega);
+		a1 = powf(EULER, -_omega);
 
 		// numerator
-		a0 = (1.0 - b1) * gain;
-		a1 = 0.0;
-		a2 = 0.0;
-
-		// denominator
-		b1 = -b1;
+		b0 = (1.0 - a1) * _gain;
+		b1 = 0.0;
 		b2 = 0.0;
 
-		// set b0 into 1 after coefficients normalization 
-		b0 = 1;
+		// denominator
+		a1 = -a1;
+		a2 = 0.0;
+
+		// set a0 into 1 after coefficients normalization 
+		a0 = 1;
 		break;
 	case E_LOW_PASS_2:
-		alpha = sine_omega / (2 * q);
+		_alpha = _sine_omega / (2 * _q);
 
 		// denominator normalization
-		b0 = 1 + alpha;
-		b1 = (-2 * cosine_omega) / b0;
-		b2 = (1 - alpha) / b0;
+		a0 = 1 + _alpha;
+		a1 = (-2 * _cosine_omega) / a0;
+		a2 = (1 - _alpha) / a0;
 
 		// numerator normalization
-		a0 = (1 - cosine_omega) * gain / 2 / b0;
-		a1 = (1 - cosine_omega) * gain / b0;
-		a2 = (1 - cosine_omega) * gain / 2 / b0;
+		b0 = (1 - _cosine_omega) * _gain / 2 / a0;
+		b1 = (1 - _cosine_omega) * _gain / a0;
+		b2 = (1 - _cosine_omega) * _gain / 2 / a0;
 
 		// set b0 into 1 after coefficients normalization 
-		b0 = 1;
+		a0 = 1;
 		break;
 	case E_HIGH_PASS_1:
-		b1 = pow(EULER, -omega);
+		a1 = powf(EULER, -_omega);
 
 		// numerator
-		a0 = (1.0 + b1) * gain / 2;
-		a1 = -(1.0 + b1) * gain / 2;
-		a2 = 0.0;
-
-		// denominator
-		b1 = -b1;
+		b0 = (1.0 + a1) * _gain / 2;
+		b1 = -(1.0 + a1) * _gain / 2;
 		b2 = 0.0;
 
+		// denominator
+		a1 = -a1;
+		a2 = 0.0;
+
 		// set b0 into 1 after coefficients normalization 
-		b0 = 1;
+		a0 = 1;
 		break;
 	case E_HIGH_PASS_2:
-		alpha = sine_omega / (2 * q);
+		_alpha = _sine_omega / (2 * _q);
 
 		// denominator normalization
-		b0 = 1 + alpha;
-		b1 = (-2 * cosine_omega) / b0;
-		b2 = (1 - alpha) / b0;
+		a0 = 1 + _alpha;
+		a1 = (-2 * _cosine_omega) / a0;
+		a2 = (1 - _alpha) / a0;
 
 		// numerator normalization
-		a0 = (1 + cosine_omega) * gain / 2 / b0;
-		a1 = -(1 + cosine_omega) * gain / b0;
-		a2 = (1 + cosine_omega) * gain / 2 / b0;
+		b0 = (1 + _cosine_omega) * _gain / 2 / a0;
+		b1 = -(1 + _cosine_omega) * _gain / a0;
+		b2 = (1 + _cosine_omega) * _gain / 2 / a0;
 
 		// set b0 into 1 after coefficients normalization 
-		b0 = 1;
+		a0 = 1;
 		break;
 	case E_ALL_PASS_1:
-		b1 = pow(EULER, -omega);
+		a1 = powf(EULER, -_omega);
 
 		// numerator
-		a0 = -b1 * gain;
-		a1 = gain;
-		a2 = 0.0;
+		b0 = -a1 * _gain;
+		b1 = _gain;
+		b2 = 0.0;
 
 		// denominator
-		b1 = -b1;
+		a1 = -a1;
 		b2 = 0.0;
 
 		// set b0 into 1 after coefficients normalization 
-		b0 = 1;
+		a0 = 1;
 		break;
 	case E_ALL_PASS_2:
-		alpha = sine_omega / (2 * q);
+		_alpha = _sine_omega / (2 * _q);
 
 		// denominator normalization
-		b0 = 1 + alpha;
-		b1 = (-2 * cosine_omega) / b0;
-		b2 = (1 - alpha) / b0;
+		a0 = 1 + _alpha;
+		a1 = (-2 * _cosine_omega) / a0;
+		a2 = (1 - _alpha) / a0;
 
 		// numerator normalization
-		a0 = (1 - alpha) * gain / b0;
-		a1 = (-2 * cosine_omega) * gain / b0;
-		a2 = (1 + alpha) * gain / b0;
+		b0 = (1 - _alpha) * _gain / a0;
+		b1 = (-2 * _cosine_omega) * _gain / a0;
+		b2 = (1 + _alpha) * _gain / a0;
 
 		// set b0 into 1 after coefficients normalization 
-		b0 = 1;
+		a0 = 1;
 		break;
 	case E_PEAK:
-		break;
-	case E_PARAMETRIC:
-		break;
-	case E_BAND_PASS:
-		alpha = sine_omega / (2 * q);
+		_alpha = _sine_omega / (2 * _q);
 
 		// denominator normalization
-		b0 = 1 + alpha;
-		b1 = (-2 * cosine_omega) / b0;
-		b2 = (1 - alpha) / b0;
+		a0 = 1 + _alpha / _A;
+		a1 = (-2 * _cosine_omega) / a0;
+		a2 = (1 - _alpha / _A) / a0;
 
 		// numerator normalization
-		a0 = alpha * gain / b0;
-		a1 = 0.0;
-		a2 = -alpha * gain / b0;
+		b0 = (1 + _alpha * _A) / a0;
+		b1 = -(2 * _cosine_omega) / a0;
+		b2 = (1 - _alpha * _A) / a0;
 
 		// set b0 into 1 after coefficients normalization 
-		b0 = 1;
+		a0 = 1;
+		break;
+	case E_PARAMETRIC:
+		_alpha = _sine_omega / (2 * _A * _q);
+
+		a0 = 1 + _alpha / _A;
+		a1 = (-2 * _cosine_omega) / a0;
+		a2 = (1 - _alpha / _A) / a0;
+
+		b0 = (1 + _alpha * _A) / a0;
+		b1 = -(2 * _cosine_omega) / a0;
+		b2 = (1 - _alpha * _A) / a0;
+
+		break;
+	case E_BAND_PASS:
+		_alpha = _sine_omega / (2 * _q);
+		
+		a0 = 1 + _alpha;
+		a1 = (-2.0 * _cosine_omega) / a0;
+		a2 = (1 - _alpha) / a0;
+
+		b0 = (_alpha * _gain) / a0;
+		b1 = 0.0;
+		b2 = -(_alpha * _gain) / a0;
+
+		// set b0 into 1 after coefficients normalization 
+		a0 = 1;
 		break;
 	case E_BAND_REJECT:
+		_alpha = _sine_omega / (2 * _q);
+
+		a0 = 1 + _alpha;
+		a1 = (-2.0 * _cosine_omega) / a0;
+		a2 = (1.0 - _alpha) / a0;
+
+		b0 = _gain / a0;
+		b1 = (-2.0 * _cosine_omega * _gain) / a0;
+		b2 = _gain / a0;
+
+		// set b0 into 1 after coefficients normalization 
+		a0 = 1;
 		break;
 	case E_LOW_SHELF:
+		//_slope should be in the range 0 < _slope <= 2
+		if (_slope >= 2.0)
+		{
+			_slope = 2.0;
+		}
+		else if(_slope <= 0.1)
+		{
+			_slope = 0.1;
+		}
+
+		_alpha = _sine_omega / 2 * sqrtf((_A + 1 / _A) * (1 / _slope - 1) + 2);
+
+		a0 = (_A + 1) + (_A - 1) * _cosine_omega + 2 * sqrtf(_A) * _alpha;
+		a1 = (-2 * ((_A - 1) + (_A + 1) * _cosine_omega)) / a0;
+		a2 = ((_A + 1) + (_A - 1) * _cosine_omega - 2 * sqrtf(_A) * _alpha) / a0;
+
+		b0 = (_A * ((_A + 1) - (_A - 1) * _cosine_omega + 2 * sqrtf(_A) * _alpha)) / a0;
+		b1 = (2 * _A * ((_A - 1) - (_A + 1) * _cosine_omega)) / a0;
+		b2 = (_A * ((_A + 1) - (_A - 1) * _cosine_omega - 2 * sqrtf(_A) * _alpha)) / a0;
+
+		// set b0 into 1 after coefficients normalization 
+		a0 = 1;
 		break;
 	case E_HIGH_SHELF:
+		//_slope should be in the range 0 < _slope <= 2
+		if (_slope >= 2.0)
+		{
+			_slope = 2.0;
+		}
+		else if (_slope <= 0.1)
+		{
+			_slope = 0.1;
+		}
+
+		_alpha = _sine_omega / 2 * sqrtf((_A + 1 / _A) * (1 / _slope - 1) + 2);
+
+		a0 = (_A + 1) - (_A - 1) * _cosine_omega + 2 * sqrtf(_A) * _alpha;
+		a1 = (2 * ((_A - 1) - (_A + 1) * _cosine_omega)) / a0;
+		a2 = ((_A + 1) - (_A - 1) * _cosine_omega - 2 * sqrtf(_A) * _alpha) / a0;
+
+		b0 = (_A * ((_A + 1) + (_A - 1) * _cosine_omega + 2 * sqrtf(_A) * _alpha)) / a0;
+		b1 = (-2 * _A * ((_A - 1) + (_A + 1) * _cosine_omega)) / a0;
+		b2 = (_A * ((_A + 1) + (_A - 1) * _cosine_omega - 2 * sqrtf(_A) * _alpha)) / a0;
+
+		// set b0 into 1 after coefficients normalization 
+		a0 = 1;
 		break;
 	}
 }
@@ -217,12 +301,12 @@ void FilterDesigner::setCoefficients()
 float* FilterDesigner::getCoefficients()
 {
 	static float coefficients[6];
-	// numerator of transfer function
+	// denominator of transfer function
 	coefficients[0] = a0;
 	coefficients[1] = a1;
 	coefficients[2] = a2;
 
-	// denominator of transfer function
+	// numerator of transfer function
 	coefficients[3] = b0;
 	coefficients[4] = b1;
 	coefficients[5] = b2;
