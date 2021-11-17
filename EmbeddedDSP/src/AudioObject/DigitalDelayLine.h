@@ -15,10 +15,10 @@ public:
 	{
 		digitalDelayLine.CreateBuffer(bufferLength, location);
 
-		bypass 		= new AudioParameterBool  ("0x00", "bypass",		false);
-		time 		= new AudioParameterInt   ("0x01", "time", 			1,		(bufferLength - 1),		(bufferLength - 1));
-		feedback 	= new AudioParameterFloat ("0x02", "feedback", 		0.0f,	1.0f,	0.0f);
-		mix 		= new AudioParameterFloat ("0x03", "mix", 			0.0f,	1.0f,	0.0f);
+		bypass 		= new AudioParameterBool  ("0x00", "Bypass",		false);
+		time 		= new AudioParameterInt   ("0x01", "Time", 			1,		(bufferLength - 1),		(bufferLength - 1));
+		feedback 	= new AudioParameterFloat ("0x02", "Feedback", 		0.0f,	1.0f,	0.0f);
+		mix 		= new AudioParameterFloat ("0x03", "Mix", 			0.0f,	1.0f,	0.0f);
 
 		addParameter(bypass);
 		addParameter(time);
@@ -37,10 +37,10 @@ public:
 
 private:
 	CircularBuffer<float> digitalDelayLine;
+	AudioParameterBool* bypass;
 	AudioParameterInt* time;
 	AudioParameterFloat* feedback;
 	AudioParameterFloat* mix;
-	AudioParameterBool* bypass;
 };
 
 void DigitalDelayLine::Process(float* buffer, uint32_t audio_block_size)

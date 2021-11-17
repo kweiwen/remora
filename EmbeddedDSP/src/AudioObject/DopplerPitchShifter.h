@@ -30,7 +30,7 @@ public:
 		digitalDelayLineA.CreateBuffer(delayStretchFactor, location);
 		digitalDelayLineB.CreateBuffer(delayStretchFactor, location);
 
-		bypass		= new AudioParameterBool	("0x00", "bypass",	 false);
+		bypass		= new AudioParameterBool	("0x00", "Bypass",	 false);
 		pitch		= new AudioParameterFloat	("0x01", "Pitch",	-12.0f, 12.0f,	12.0f);
 		mix			= new AudioParameterFloat	("0x02", "Mix",		 0.0f,	1.0f,	0.5f);
 
@@ -53,9 +53,9 @@ private:
 	FunctionGenerator waveA;
 	FunctionGenerator waveB;
 
+	AudioParameterBool* bypass;
 	AudioParameterFloat* pitch;
 	AudioParameterFloat* mix;
-	AudioParameterBool* bypass;
 
 	float baseFrequency;
 	float delayStretchFactor;

@@ -1,7 +1,5 @@
-.vs/
-EmbeddedDSP/Debug/
-EmbeddedDSP/Release/
+
 Debug/
 Release/
-x64/
+.vs/
 Render/*.wav

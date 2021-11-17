@@ -8,8 +8,9 @@ class AudioParameterChoice : public RangedAudioParameter<int>
 public:
 	AudioParameterChoice(const char* parameterID, const char* parameterName, unsigned int size, int* choicesList, unsigned int deafultIndex) 
     : RangedAudioParameter<int>(parameterID, parameterName, 0, size-1), 
-      def(deafultIndex),
-      value(deafultIndex), 
+      def(choicesList[deafultIndex]),
+      value(choicesList[deafultIndex]),
+      deafultIndex(deafultIndex),
       list(choicesList), 
       size(size)
 	{
@@ -32,6 +33,9 @@ public:
 
     /** Size of list */
     unsigned int size;
+
+    /** Deafult Index of the list */
+    unsigned int deafultIndex;
 
     /** Returns the parameter's current value. */
     operator int() const
@@ -74,9 +78,8 @@ private:
     void checkInvariants() const
     {
         assert(size > 0);
-        assert(end >= value);
-        assert(value >= start);
-        //assert(slope > 0);
+        assert(end >= deafultIndex);
+        assert(deafultIndex >= start);
     }
 };
 

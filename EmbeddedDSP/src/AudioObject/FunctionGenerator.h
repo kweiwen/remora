@@ -60,6 +60,7 @@ float FunctionGenerator::Generate(unsigned int waveform, float frequency)
 		_value = (cycle - 0.5f) * 2.0f;
 	    break;
 	case E_TRAPEZOID:
+		_value = 0;
 		for (int index = 0; index < 16; index++)
 		{
 			int coefficeint = (index * 2) + 1;
@@ -67,9 +68,9 @@ float FunctionGenerator::Generate(unsigned int waveform, float frequency)
 		}
 	    break;
 	case E_SQUARE:
-		if(_degree < width)
+		if(cycle < width)
 			_value = 1;
-		else if(_degree > width)
+		else if(cycle > width)
 			_value = -1;
 		else
 			_value = 0;

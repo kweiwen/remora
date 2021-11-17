@@ -37,7 +37,7 @@ public:
 		digitalDelayLineA2.CreateBuffer(delayStretchFactor, location);
 		digitalDelayLineB2.CreateBuffer(delayStretchFactor, location);
 
-		bypass			= new AudioParameterBool ("0x00", "bypass",					false);
+		bypass			= new AudioParameterBool ("0x00", "Bypass",					false);
 		highPitchVol	= new AudioParameterFloat("0x01", "Higher Pitch Volume",	0.0f, 1.0f, 0.5f);
 		lowPitchVol		= new AudioParameterFloat("0x02", "Lower Pitch Volume",		0.0f, 1.0f, 0.75f);
 		mix				= new AudioParameterFloat("0x03", "Mix",					0.0f, 1.0f, 0.8f);

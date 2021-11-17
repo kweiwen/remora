@@ -11,12 +11,14 @@
 #include "AudioObject/Oscillator.h"
 #include "AudioObject/DopplerPitchShifter.h"
 #include "AudioObject/DopplerOctave.h"
+#include "AudioObject/ModulationFilter.h"
 
 unsigned int nodeSize = 1;
 DigitalDelayLine dl0(SR * 3, 1);
 DigitalDelayLine dl1(SR * 3, 2);
 DopplerPitchShifter ps(0);
 DopplerOctave oct(0);
+ModulationFilter modFilt;
 AudioObject* audioNodes[8];
 
 // Structures to hold floating point data for each AD1939
@@ -99,15 +101,7 @@ void clear_currentDMA()
 
 void prepare_audioBlocks()
 {
-	audioNodes[0] = &oct;
-	audioNodes[1] = &dl0;
-	audioNodes[2] = &dl1;
-
-	audioNodes[1]->ParameterCtrl(2, 64);
-
-	audioNodes[2]->ParameterCtrl(0, 16);
-	audioNodes[2]->ParameterCtrl(1, 64);
-	audioNodes[2]->ParameterCtrl(2, 64);
+	audioNodes[0] = &modFilt;
 }
 
 void processSample(float *buffer, unsigned int buffersize)

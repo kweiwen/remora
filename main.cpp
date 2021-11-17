@@ -8,7 +8,9 @@
 #include <AudioObject.h>
 #include <DopplerPitchShifter.h>
 #include <DopplerOctave.h>
-#include <FilterDesigner.h>
+#include <FilterZ.h>
+#include <ModulationFilter.h>
+#include <FeedbackDelayNetwork.h>
 
 #include "Vendor/MLD.hpp"
 #include "Vendor/AudioFile.h"
@@ -28,7 +30,10 @@ void renderAlgorithm()
 	//audioNodes[0] = &dl0;
 	//audioNodes[1] = &dl1;
 
-	DopplerOctave obj(0);
+	//DopplerOctave obj(0);
+	//Oscillator obj;
+	//ModulationFilter obj;
+	FeedbackDelayNetwork obj(0);
 
 	unsigned int NodeSize = 1;
 
@@ -36,7 +41,7 @@ void renderAlgorithm()
 	audioNodes[0] = &obj;
 
 	AudioFile<double> audioFile;
-	audioFile.load("Extra/sine_mono_32bit_48000.wav");
+	audioFile.load("Extra/taipei-emperor-intro-mono.wav");
 	std::cout << "Before Processing..." << std::endl;
 	audioFile.printSummary();
 	std::cout << "" << std::endl;
