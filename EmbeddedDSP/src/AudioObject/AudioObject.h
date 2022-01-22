@@ -53,40 +53,54 @@ public:
 
 		To Process by Block(circular convolution as example):
 
-		unsigned int buffer_size = 1024;
-		unsigned int block_size = 1024/audio_block_size;
+        # fftSize should be greater than or equal to audio_block_size
+		unsigned int fftSize ;
 
-		float coefficient[buffer_size];
-		coefficient_z = fft(coefficient, buffer_size);
+        # convert time domain data into frequency domain data
+		float hn[fftSize];
+		Hn = fft(hn, fftSize);
 
-		CircularBuffer cb(buffer_size);
-		float cb_z[buffer_size];
+        # FIFO circular buffer
+		CircularBuffer xn(fftSize);
 
-		CircularBuffer block(block_size);
+	    # array to place Xn
+		float Xn[fftSize];
 
-		float temp_z[buffer_size];
-		float temp[block_size][buffer_size];
+	    # array to place frequency domain data, Yn = Xn * Hn
+		float Yn[fftSize];
+
+	    # array to hold time domain data, converted from Yn.
+	    float yn[fftSize];
 
 		void Process(float* buffer, uint32_t audio_block_size)
 		{
-			block.write(buffer);
-
 			for(int index = 0; index < audio_block_size; index++)
 	  		{
-				cb.write(buffer[index]);
-				buffer[index] = 0;
+	  		    #  xn appends one block of data in every process
+				xn.write(buffer[index]);
 			}
+            # time0: 0  0  0  B0
+	 	    # time1: 0  0  B0 B1
+	        # time2: 0  B0 B1 B2
+	        # time3: B0 B1 B2 B3
+	        # time4: B1 B2 B3 B4
 
-			cb_z = fft(cb.buffer, size);
-			temp_z = multiply(cb_z, coefficient_z, size);
-			temp[block.writeindex] = ifft(temp_z, size);
+            # xn holds time domain, real number only, use rfft to transform xn into Xn
+			Xn = rfft(xn.read(), fftSize);
 
-			for(int i = 0; i < audio_block_size; i++)
+			# Xn: complex number, size in fftSize
+			# Hn: complex number, size in fftSize
+			# multiply two array in same size
+            # Yn: complex number, size in fftSize
+			Yn = complex_multiply(Xn, Hn, fftSize);
+
+			# adopt rfft method to convert frequency domain data into time domain, real number
+			yn = irfft(Yn, fftSize);
+
+			for(int index = 0; index < audio_block_size; index++)
 			{
-				for(int j = 0; j < block_size; j++)
-	  			{
-					buffer[i] = buffer[i] + temp[j];
-				}
+			    # yn contains fftSize data, but takes one block data from yn only
+			    buffer[index] = yn[index];
 			}
 		}
 
