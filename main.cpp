@@ -64,22 +64,6 @@ void renderAlgorithm()
 		buffer[i].resize(iteration * blockSize);
 	}
 
-	//for (int i = 0; i < iteration; i++)
-	//{
-	//	for (int channel = 0; channel < channels; channel++)
-	//	{
-	//		double* currentFrame = &audioFile.samples[channel][i];
-
-	//		for (int index = 0; index < NodeSize; index++)
-	//		{
-	//			audioNodes[index]->Process(currentFrame, 128);
-	//		}
-
-	//		//buffer[channel][i] = currentSample;
-	//	}
-	//	std::cout << i << std::endl;
-	//}
-
 	for (int i = 0; i < iteration; i++)
 	{
 		double* currentFrame = &audioFile.samples[0][i*blockSize];
@@ -88,11 +72,8 @@ void renderAlgorithm()
 			audioNodes[index]->Process(currentFrame, blockSize);
 		}
 
-		std::cout << "Current Iteration: " << i << std::endl;
-
 		for (int j = 0; j < blockSize; j++)
 		{
-			//std::cout << currentFrame[j] << std::endl;
 			buffer[0][i * blockSize + j] = currentFrame[j];
 		}
 	}
