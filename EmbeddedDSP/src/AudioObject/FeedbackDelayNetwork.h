@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include <stdint.h>
 #include "CircularBuffer.h"
 #include "AudioObject.h"
