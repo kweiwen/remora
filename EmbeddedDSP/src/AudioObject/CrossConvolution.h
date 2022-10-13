@@ -128,8 +128,8 @@ void CrossConvolution::Process(double* buffer, uint32_t audio_block_size)
 			auto real2 = data_fd_real[i] * impedance_2_fd_real[i] - data_fd_imag[i] * impedance_2_fd_imag[i];
 			auto imag2 = data_fd_imag[i] * impedance_2_fd_real[i] + data_fd_real[i] * impedance_2_fd_imag[i];
 
-			data_fd_real[i] = real1;
-			data_fd_imag[i] = imag1;
+			data_fd_real[i] = real1 * mix->value + real1 * (1 - mix->value);
+			data_fd_imag[i] = imag1 * mix->value + imag2 * (1 - mix->value);
 		}
 
 		//convert back to td data
