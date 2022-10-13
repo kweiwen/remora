@@ -17,7 +17,7 @@ public:
 		outputBuffer.CreateBuffer(2048, location);
 
 		fftSize = 2048;
-		offset = 128;
+		offset = fftSize - 128;
 
 		data_td_real = new double[fftSize];
 		data_td_imag = new double[fftSize];
@@ -33,6 +33,22 @@ public:
 		impedance_1_fd_imag = new double[fftSize];
 		impedance_2_fd_real = new double[fftSize];
 		impedance_2_fd_imag = new double[fftSize];
+
+		for (int i = 0; i < fftSize; i++)
+		{
+			impedance_1_td_real[i] = impedance_1[i];
+			impedance_2_td_real[i] = impedance_2[i];
+			impedance_1_td_imag[i] = 0.0f;
+			impedance_2_td_imag[i] = 0.0f;
+
+			data_td_real[i] = 0.0f;
+			data_td_imag[i] = 0.0f;
+			data_fd_real[i] = 0.0f;
+			data_fd_imag[i] = 0.0f;
+		}
+
+		instance.fft_normalize(impedance_1_td_real, impedance_1_td_imag, fftSize, impedance_1_fd_real, impedance_1_fd_imag);
+		instance.fft_normalize(impedance_2_td_real, impedance_2_td_imag, fftSize, impedance_2_fd_real, impedance_2_fd_imag);
 
 		bypass			= new AudioParameterBool ("0x00", "Bypass", false);
 		mix				= new AudioParameterFloat("0x01", "Mix",	0.0f, 1.0f, 0.8f);
@@ -102,7 +118,7 @@ void CrossConvolution::Process(double* buffer, uint32_t audio_block_size)
 			data_td_real[i] = inputBuffer.ReadBuffer(fftSize - i);
 		}
 
-		//convert to fd data
+		////convert to fd data
 		instance.fft_normalize(data_td_real, data_td_imag, fftSize, data_fd_real, data_fd_imag);
 
 		for (int i = 0; i < fftSize; i++)
@@ -112,8 +128,8 @@ void CrossConvolution::Process(double* buffer, uint32_t audio_block_size)
 			auto real2 = data_fd_real[i] * impedance_2_fd_real[i] - data_fd_imag[i] * impedance_2_fd_imag[i];
 			auto imag2 = data_fd_imag[i] * impedance_2_fd_real[i] + data_fd_real[i] * impedance_2_fd_imag[i];
 
-			data_fd_real[i] = real1 * mix->value + real2 * (1 - mix->value);
-			data_fd_imag[i] = imag1 * mix->value + imag2 * (1 - mix->value);
+			data_fd_real[i] = real1;
+			data_fd_imag[i] = imag1;
 		}
 
 		//convert back to td data

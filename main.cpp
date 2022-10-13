@@ -36,8 +36,8 @@ void renderAlgorithm()
 	//Oscillator obj;
 	//ModulationFilter obj;
 	//FeedbackDelayNetwork obj(0);
-	//CrossConvolution obj(0);
-	UnitGain obj(0);
+	CrossConvolution obj(0);
+	//UnitGain obj(0);
 
 	unsigned int NodeSize = 1;
 
