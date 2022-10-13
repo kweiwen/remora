@@ -51,7 +51,7 @@ public:
 		instance.fft_normalize(impedance_2_td_real, impedance_2_td_imag, fftSize, impedance_2_fd_real, impedance_2_fd_imag);
 
 		bypass			= new AudioParameterBool ("0x00", "Bypass", false);
-		mix				= new AudioParameterFloat("0x01", "Mix",	0.0f, 1.0f, 0.8f);
+		mix				= new AudioParameterFloat("0x01", "Mix",	0.0f, 1.0f, 0.9f);
 
 		addParameter(bypass);
 		addParameter(mix);
@@ -82,12 +82,12 @@ private:
 
 	double impedance_1[2048] =
 	{
-		#include "../../../RIRs/impedance_1.dat"
+		#include "../../../RIRs/impedance.dat"
 	};
 
 	double impedance_2[2048] =
 	{
-		#include "../../../RIRs/impedance_2.dat"
+		#include "../../../RIRs/impedance_1.dat"
 	};
 
 	double* impedance_1_td_real;
@@ -124,11 +124,12 @@ void CrossConvolution::Process(double* buffer, uint32_t audio_block_size)
 		for (int i = 0; i < fftSize; i++)
 		{
 			auto real1 = data_fd_real[i] * impedance_1_fd_real[i] - data_fd_imag[i] * impedance_1_fd_imag[i];
-			auto imag1 = data_fd_imag[i] * impedance_1_fd_real[i] + data_fd_real[i] * impedance_1_fd_imag[i];
 			auto real2 = data_fd_real[i] * impedance_2_fd_real[i] - data_fd_imag[i] * impedance_2_fd_imag[i];
+
+			auto imag1 = data_fd_imag[i] * impedance_1_fd_real[i] + data_fd_real[i] * impedance_1_fd_imag[i];
 			auto imag2 = data_fd_imag[i] * impedance_2_fd_real[i] + data_fd_real[i] * impedance_2_fd_imag[i];
 
-			data_fd_real[i] = real1 * mix->value + real1 * (1 - mix->value);
+			data_fd_real[i] = real1 * mix->value + real2 * (1 - mix->value);
 			data_fd_imag[i] = imag1 * mix->value + imag2 * (1 - mix->value);
 		}
 
