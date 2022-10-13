@@ -106,7 +106,7 @@ public:
 
 		====================================================
 	*/
-	virtual void Process(float* buffer, uint32_t audio_block_size) = 0;
+	virtual void Process(double* buffer, uint32_t audio_block_size) = 0;
 
 	/** to ensure derived class will implement this function, parameter and process buffer will be reset to default
 	    value. We suggest any AudioObjects conatin BPM/Delay Time/Modulation... properties should restore all time variant

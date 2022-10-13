@@ -149,6 +149,10 @@
     <ClInclude Include="Vendor\AudioFile.h" />
     <ClInclude Include="Vendor\MLD.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="RIRs\impedance_1.dat" />
+    <None Include="RIRs\impedance_2.dat" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
