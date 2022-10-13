@@ -11,6 +11,7 @@
 #include <FilterZ.h>
 #include <ModulationFilter.h>
 #include <FeedbackDelayNetwork.h>
+#include <CrossConvolution.h>
 
 #include "Vendor/MLD.hpp"
 #include "Vendor/AudioFile.h"
