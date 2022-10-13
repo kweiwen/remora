@@ -30,4 +30,12 @@
       <Filter>Vendor</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="RIRs\impedance_1.dat">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="RIRs\impedance_2.dat">
+      <Filter>Header Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

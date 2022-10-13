@@ -12,6 +12,7 @@
 #include <ModulationFilter.h>
 #include <FeedbackDelayNetwork.h>
 #include <CrossConvolution.h>
+#include <UnitGain.h>
 
 #include "Vendor/MLD.hpp"
 #include "Vendor/AudioFile.h"
@@ -34,7 +35,9 @@ void renderAlgorithm()
 	//DopplerOctave obj(0);
 	//Oscillator obj;
 	//ModulationFilter obj;
-	FeedbackDelayNetwork obj(0);
+	//FeedbackDelayNetwork obj(0);
+	//CrossConvolution obj(0);
+	UnitGain obj(0);
 
 	unsigned int NodeSize = 1;
 
@@ -50,27 +53,47 @@ void renderAlgorithm()
 	int channels = audioFile.getNumChannels();
 	int numSamples = audioFile.getNumSamplesPerChannel();
 
+	int blockSize = 128;
+	int iteration = (numSamples / blockSize) + 1;
+
 	AudioFile<double>::AudioBuffer buffer;
 	buffer.resize(channels);
 
 	for (int i = 0; i < channels; i++)
 	{
-		buffer[i].resize(numSamples);
+		buffer[i].resize(iteration * blockSize);
 	}
 
-	
-	for (int i = 0; i < numSamples; i++)
+	//for (int i = 0; i < iteration; i++)
+	//{
+	//	for (int channel = 0; channel < channels; channel++)
+	//	{
+	//		double* currentFrame = &audioFile.samples[channel][i];
+
+	//		for (int index = 0; index < NodeSize; index++)
+	//		{
+	//			audioNodes[index]->Process(currentFrame, 128);
+	//		}
+
+	//		//buffer[channel][i] = currentSample;
+	//	}
+	//	std::cout << i << std::endl;
+	//}
+
+	for (int i = 0; i < iteration; i++)
 	{
-		for (int channel = 0; channel < channels; channel++)
+		double* currentFrame = &audioFile.samples[0][i*blockSize];
+		for (int index = 0; index < NodeSize; index++)
 		{
-			float currentSample = audioFile.samples[channel][i];
+			audioNodes[index]->Process(currentFrame, blockSize);
+		}
 
-			for (int index = 0; index < NodeSize; index++)
-			{
-				audioNodes[index]->Process(&currentSample, 1);
-			}
+		std::cout << "Current Iteration: " << i << std::endl;
 
-			buffer[channel][i] = currentSample;
+		for (int j = 0; j < blockSize; j++)
+		{
+			//std::cout << currentFrame[j] << std::endl;
+			buffer[0][i * blockSize + j] = currentFrame[j];
 		}
 	}
 
@@ -87,18 +110,18 @@ void memoryLeakDetector()
 {
 	memoryld::memory_monitoring();
 
-	std::cout << "" << std::endl;
-	DigitalDelayLine dl(32768, 0);
-	dl.Release();
+	//std::cout << "" << std::endl;
+	//DigitalDelayLine dl(32768, 0);
+	//dl.Release();
 
-	Oscillator osc;
-	osc.Release();
+	//Oscillator osc;
+	//osc.Release();
 
-	DopplerPitchShifter ps(0);
-	ps.Release();
+	//DopplerPitchShifter ps(0);
+	//ps.Release();
 
-	DopplerOctave oct(0);
-	oct.Release();
+	//DopplerOctave oct(0);
+	//oct.Release();
 
 	memoryld::memory_check();
 }
@@ -106,7 +129,7 @@ void memoryLeakDetector()
 void main()
 {
 	renderAlgorithm();
-	memoryLeakDetector();
+	//memoryLeakDetector();
 
 	//FilterDesigner lp;
 	//lp.model = 1;

@@ -11,11 +11,11 @@
 class UnitGain : public AudioObject
 {
 public:
-	UnitGain(unsigned int location = 0) : AudioObject(2)
+	UnitGain(unsigned int location = 0) : AudioObject(3)
 	{
 		bypass		= new AudioParameterBool ("0x00", "Bypass",		false);
 		polarity	= new AudioParameterBool ("0x01", "Polarity",	false);
-		gain		= new AudioParameterFloat("0x02", "Gain",		0.0f, 1.0f, 0.8f);
+		gain		= new AudioParameterFloat("0x02", "Gain",		0.0f, 1.0f, 0.01f);
 
 		addParameter(bypass);
 		addParameter(polarity);
