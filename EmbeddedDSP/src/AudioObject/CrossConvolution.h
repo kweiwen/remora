@@ -87,7 +87,7 @@ private:
 
 	double impedance_2[2048] =
 	{
-		#include "../../../RIRs/impedance_1.dat"
+		#include "../../../RIRs/impedance.dat"
 	};
 
 	double* impedance_1_td_real;
@@ -133,7 +133,7 @@ void CrossConvolution::Process(double* buffer, uint32_t audio_block_size)
 			data_fd_imag[i] = imag1 * mix->value + imag2 * (1 - mix->value);
 		}
 
-		//convert back to td data
+		// convert back to td data
 		instance.ifft_normalize(data_fd_real, data_fd_imag, fftSize, data_td_real, data_td_imag);
 
 		for (int i = 0; i < audio_block_size; i++)
