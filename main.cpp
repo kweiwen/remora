@@ -45,7 +45,7 @@ void renderAlgorithm()
 	audioNodes[0] = &obj;
 
 	AudioFile<double> audioFile;
-	audioFile.load("Extra/taipei-emperor-intro-mono.wav");
+	audioFile.load("Extra/Protection.wav");
 	std::cout << "Before Processing..." << std::endl;
 	audioFile.printSummary();
 	std::cout << "" << std::endl;
@@ -53,7 +53,7 @@ void renderAlgorithm()
 	int channels = audioFile.getNumChannels();
 	int numSamples = audioFile.getNumSamplesPerChannel();
 
-	int blockSize = 128;
+	int blockSize = 256;
 	int iteration = (numSamples / blockSize) + 1;
 
 	AudioFile<double>::AudioBuffer buffer;
@@ -75,6 +75,7 @@ void renderAlgorithm()
 		for (int j = 0; j < blockSize; j++)
 		{
 			buffer[0][i * blockSize + j] = currentFrame[j];
+			buffer[1][i * blockSize + j] = currentFrame[j];
 		}
 	}
 

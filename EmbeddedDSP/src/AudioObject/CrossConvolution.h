@@ -17,7 +17,7 @@ public:
 		outputBuffer.CreateBuffer(2048, location);
 
 		fftSize = 2048;
-		offset = fftSize - 128;
+		offset = fftSize - 256;
 
 		data_td_real = new double[fftSize];
 		data_td_imag = new double[fftSize];
@@ -51,7 +51,7 @@ public:
 		instance.fft_normalize(impedance_2_td_real, impedance_2_td_imag, fftSize, impedance_2_fd_real, impedance_2_fd_imag);
 
 		bypass			= new AudioParameterBool ("0x00", "Bypass", false);
-		mix				= new AudioParameterFloat("0x01", "Mix",	0.0f, 1.0f, 0.9f);
+		mix				= new AudioParameterFloat("0x01", "Mix",	0.0f, 1.0f, 0.0f);
 
 		addParameter(bypass);
 		addParameter(mix);
