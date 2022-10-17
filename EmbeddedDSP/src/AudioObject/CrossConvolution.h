@@ -118,7 +118,7 @@ void CrossConvolution::Process(double* buffer, uint32_t audio_block_size)
 			data_td_real[i] = inputBuffer.ReadBuffer(fftSize - i);
 		}
 
-		////convert to fd data
+		// convert to fd data
 		instance.fft_normalize(data_td_real, data_td_imag, fftSize, data_fd_real, data_fd_imag);
 
 		for (int i = 0; i < fftSize; i++)
