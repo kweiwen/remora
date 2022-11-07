@@ -51,7 +51,7 @@ public:
 		instance.fft_normalize(impedance_2_td_real, impedance_2_td_imag, fftSize, impedance_2_fd_real, impedance_2_fd_imag);
 
 		bypass			= new AudioParameterBool ("0x00", "Bypass", false);
-		mix				= new AudioParameterFloat("0x01", "Mix",	0.0f, 1.0f, 0.0f);
+		mix				= new AudioParameterFloat("0x01", "Mix",	0.0f, 1.0f, 1.0f);
 
 		addParameter(bypass);
 		addParameter(mix);
@@ -82,12 +82,12 @@ private:
 
 	double impedance_1[2048] =
 	{
-		#include "../../../RIRs/impedance.dat"
+		#include "../../../RIRs/impedance_1.dat"
 	};
 
 	double impedance_2[2048] =
 	{
-		#include "../../../RIRs/impedance.dat"
+		#include "../../../RIRs/impedance_1.dat"
 	};
 
 	double* impedance_1_td_real;
