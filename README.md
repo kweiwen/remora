@@ -1,2 +1,1 @@
-# remora - An embedded framework to implement audio processing and control interface on 21489 SHARC DSP
-
+# remora - Implementing audio processing and control interfaces on the 21489 SHARC DSP
