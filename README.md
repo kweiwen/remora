@@ -17,7 +17,7 @@
 
 This project utilizes an Evaluation Board (EVB) purchased from Alibaba at a cost of $60. The EVB is equipped with high-quality audio components, including a 21489 SHARC DSP, a flash, a SDRAM, a PSU, an ADC-PCM1804, and a DAC-PCM1798, ensuring high fidelity quality.
 
-An emulator, crucial for programming the EVB, was also sourced from Alibaba. This un-authorized unit, priced at $200, provides a cost-effective alternative to the official emulator, which is priced around $2,000.
+An emulator, crucial for programming the EVB, was also sourced from Alibaba. This un-authorized unit, priced at $200, provides a cost-effective alternative to the official emulator(ICE-1000/ICE-2000), which is priced around $2,000.
 
 Additionally, a USB-UART adapter was adopted for serial communication purposes. Priced at approximately $5, this adapter underscores our commitment to cost-efficiency without compromising on performance.
 
