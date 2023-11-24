@@ -5,17 +5,17 @@
 ### Requirements
 
 - Hardware:
-  - Evaluation Board (EVB)
+  - Evaluation Board(EVB)
   - Emulator
   - USB-UART Adapter
 
 - Software:
-  - CrossCore Embedded Studio (CCES)
+  - CrossCore Embedded Studio(CCES)
   - Visual Studio
 
 ### Overview
 
-This project utilizes an Evaluation Board (EVB) purchased from Alibaba at a cost of $60. The EVB is equipped with high-quality audio components, including a 21489 SHARC DSP, a flash, a SDRAM, a PSU, an ADC-PCM1804, and a DAC-PCM1798, ensuring high fidelity quality.
+This project utilizes an Evaluation Board(EVB) purchased from Alibaba at a cost of $60. The EVB is equipped with high-quality audio components, including a 21489 SHARC DSP, a flash, a SDRAM, a PSU, an ADC-PCM1804, and a DAC-PCM1798, ensuring high fidelity quality.
 
 An emulator, crucial for programming the EVB, was also sourced from Alibaba. This un-authorized unit, priced at $200, provides a cost-effective alternative to the official emulator(ICE-1000/ICE-2000), which is priced around $2,000.
 
