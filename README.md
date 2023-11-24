@@ -4,14 +4,14 @@
 
 ### Requirements
 
-#### Hardware:
-- Evaluation Board (EVB)
-- Emulator
-- USB-UART Adapter
+- Hardware:
+  - Evaluation Board (EVB)
+  - Emulator
+  - USB-UART Adapter
 
-#### Software:
-- CrossCore Embedded Studio (CCES)
-- Visual Studio
+- Software:
+  - CrossCore Embedded Studio (CCES)
+  - Visual Studio
 
 ### Overview
 
