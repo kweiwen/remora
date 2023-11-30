@@ -39,7 +39,7 @@
   - `SPI Flash`: For serial booting.
   - `PROM`: For parallel booting.
 
-- EZ-KIT Boot Encoding Options(Rotate the switch on EZ-KIT):
+- EZ-KIT Boot Encoding Options(Rotatary switch on EZ-KIT):
   - `0`: SPI Slave Boot.
   - `1`: Boot from SPI Flash Memory (SPI Master Boot).
   - `2`: Boot from 8-bit External Parallel Flash Memory (Default).
